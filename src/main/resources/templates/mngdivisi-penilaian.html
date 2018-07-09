@@ -16,7 +16,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="roboto breadcrumb-item active" aria-current="page">
-                    <a th:href="'/mngdivisi'">Beranda</a>
+                    <a href="/mngdivisi">Beranda</a>
                 </li>
                 <li class="roboto breadcrumb-item active" aria-current="page">
                     <a th:href="'/mngdivisi/rekap/' + ${karyawanRekap.karyawan.id}">Detail Karyawan</a>
@@ -69,8 +69,8 @@
 
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
-            <a class="nav-item nav-link active montserrat-small-bold" id="nav-penilaian-mandiri-tab" data-toggle="tab" th:href="'#nav-penilaian-mandiri'" role="tab" aria-controls="nav-penilaian-mandiri" aria-selected="true">Rekap Evaluasi Diri</a>
-            <a class="nav-item nav-link montserrat-small-bold" id="nav-feedback-tab" data-toggle="tab" th:href='"#nav-feedback"' role="tab" aria-controls="nav-feedback" aria-selected="false">Rekap Feedback Karyawan</a>
+            <a class="nav-item nav-link active montserrat-small-bold" id="nav-penilaian-mandiri-tab" data-toggle="tab" href="#nav-penilaian-mandiri" role="tab" aria-controls="nav-penilaian-mandiri" aria-selected="true">Rekap Evaluasi Diri</a>
+            <a class="nav-item nav-link montserrat-small-bold" id="nav-feedback-tab" data-toggle="tab" href="#nav-feedback" role="tab" aria-controls="nav-feedback" aria-selected="false">Rekap Feedback Karyawan</a>
         </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
@@ -160,8 +160,8 @@
                 </div>
             </div>
             <div th:unless="${isEmptyRF}">
-                <table id="tabel-rf" class="table table-hover">
-                    <thead>
+                <table class="table-mpp table table-hover">
+                    <thead class="tabel-header">
                     <tr>
                         <th class="montserrat-small-bold" scope="col">Proyek</th>
                         <th class="montserrat-small-bold" scope="col">Penilai</th>
@@ -177,14 +177,65 @@
                             <td class="montserrat-small" th:text="${RF.namaPenilai}"></td>
                             <td class="montserrat-small" th:text="${RF.rolePenilai}"></td>
                             <td class="montserrat-small" th:text="${RF.feedback}"></td>
-                            <td class="montserrat-small">
-                                <img class="d-inline icon-sidebar mr-2" src="/img/yellow-star.png">
+                            <td th:if="${RF.rating==0}" class="montserrat-small text-center text-value">
+                                <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
                                 <p class="d-inline montserrat-small text-muted" th:text="${RF.rating}"></p>
                             </td>
+                            <td th:if="${RF.rating>0 && RF.rating<=60}" class="montserrat-small text-center text-value">
+                                <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
+                                <p class="d-inline montserrat-small text-muted" th:text="${RF.rating}"></p>
+                            </td>
+                            <td th:if="${RF.rating>60 && RF.rating<=80}" class="montserrat-small text-center text-value">
+                                <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
+                                <p class="d-inline montserrat-small text-muted" th:text="${RF.rating}"></p>
+                            </td>
+                            <td th:if="${RF.rating>80 && RF.rating<=100}" class="montserrat-small text-center text-value">
+                                <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
+                                <p class="d-inline montserrat-small text-muted" th:text="${RF.rating}"></p>
+                            </td>
+
+
                             <td class="montserrat-small" th:text="${RF.tanggalPenilaian}"></td>
                         </tr>
                     </div>
                 </table>
+            </div>
+        </div>
+    </div>
+    <div th:if="${!isEmptyRF}">
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    Keterangan Rentang Nilai:
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/gold-star.png">: 81-100
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/silver-star.png">: 61-80
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/bronze-star.png">: 1-60
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-2">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/black-star.png">: Belum Dinilai
+                </h3>
             </div>
         </div>
     </div>

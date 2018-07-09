@@ -48,63 +48,76 @@ public interface RatingFeedbackMapper {
 
 
 //punya jihan
-    @Select(" SELECT RF.periode, RF.id, PG.nama AS namaPenilai, P.nama_proyek AS namaProyek, RF.feedback, RF.rating, " +
-            "        RF.tanggal AS tanggalPenilaian, RP.nama AS rolePenilai " +
-            " FROM mpp.\"RATING_FEEDBACK\" AS RF, " +
-            "     mpp.\"PROYEK\" AS P, " +
-            "     mpp.\"KARYAWAN\" AS K," +
-            "     mpp.\"PENGGUNA\" AS PG, " +
-            "     mpp.\"KARYAWAN_PROYEK\" AS KP, " +
-            "     mpp.\"ROLE_PROYEK\" AS RP " +
-            " WHERE RF.id_proyek = P.id " +
-            "    AND RP.id = KP.id_role " +
-            "    AND KP.id_karyawan = RF.id_penilai " +
-            "    AND KP.id_proyek = RF.id_proyek " +
-            "    AND PG.id = K.id_pengguna " +
-            "    AND RF.id_penilai = K.id " +
-            "    AND RF.id_proyek = ${idProyek} " +
-            "    AND RF.id_karyawan_dinilai = ${idKaryawan} " +
-            "    ORDER BY periode DESC;")
+    @Select("SELECT RF.periode, RF.id, PA.nama AS namaPenilai, RF.feedback, RF.rating, RF.tanggal, " +
+            " RP.nama AS rolePenilai, P.nama_proyek FROM mpp.\"RATING_FEEDBACK\" AS RF, mpp.\"KARYAWAN_PROYEK\" AS KPA, " +
+            " mpp.\"KARYAWAN_PROYEK\" AS KPB, mpp.\"KARYAWAN\" AS KA, mpp.\"PENGGUNA\" AS PA, mpp.\"ROLE_PROYEK\" AS RP, " +
+            " mpp.\"PROYEK\" AS P WHERE RF.id_karyawan_dinilai = ${idKaryawanProyek} AND RF.id_karyawan_dinilai = KPB.id AND " +
+            " KPA.id = RF.id_penilai AND KPA.id_karyawan = KA.id AND KA.id_pengguna = PA.id AND KPA.id_role = RP.id AND " +
+            " P.id = RF.id_proyek;")
     @Results(value = {
             @Result(property="id", column="id"),
             @Result(property="namaPenilai", column="namaPenilai"),
-            @Result(property="namaProyek", column="namaProyek"),
+            @Result(property="namaProyek", column="nama_proyek"),
             @Result(property="feedback", column="feedback"),
             @Result(property="rating", column="rating"),
-            @Result(property="tanggalPenilaian", column="tanggalPenilaian"),
+            @Result(property="tanggalPenilaian", column="tanggal"),
             @Result(property="rolePenilai", column="rolePenilai"),
             @Result(property ="periode", column="periode")
     })
-    List<RatingFeedbackModel> selectRatingFeedbackKP(@Param("idProyek") Integer idProyek,
-                                                     @Param("idKaryawan") Integer idKaryawan);
+    List<RatingFeedbackModel> selectRatingFeedbackKP(@Param("idKaryawanProyek") Integer idKaryawanProyek);
 
-    @Select(" SELECT RF.id, PG.nama AS namaPenilai, P.nama_proyek AS namaProyek, RF.feedback, RF.rating, " +
-            "        RF.tanggal AS tanggalPenilaian, RP.nama AS rolePenilai " +
-            " FROM mpp.\"RATING_FEEDBACK\" AS RF, " +
-            "     mpp.\"PROYEK\" AS P, " +
-            "     mpp.\"KARYAWAN\" AS K," +
-            "     mpp.\"PENGGUNA\" AS PG, " +
-            "     mpp.\"KARYAWAN_PROYEK\" AS KP, " +
-            "     mpp.\"ROLE_PROYEK\" AS RP " +
-            " WHERE RF.id_proyek = P.id " +
-            "    AND RP.id = KP.id_role " +
-            "    AND KP.id_karyawan = RF.id_penilai " +
-            "    AND KP.id_proyek = RF.id_proyek " +
-            "    AND PG.id = K.id_pengguna " +
-            "    AND RF.id_penilai = K.id " +
-            "    AND RF.id_karyawan_dinilai = ${idKaryawan} " +
-            "    AND RF.periode = '${periode}' " +
-            "    ORDER BY periode DESC;")
+    @Select("SELECT RF.periode, RF.id, PA.nama AS namaPenilai, RF.feedback, RF.rating, RF.tanggal, " +
+            " RP.nama AS rolePenilai, P.nama_proyek FROM mpp.\"RATING_FEEDBACK\" AS RF, mpp.\"KARYAWAN_PROYEK\" AS KPA, " +
+            " mpp.\"KARYAWAN_PROYEK\" AS KPB, mpp.\"KARYAWAN\" AS KA, mpp.\"PENGGUNA\" AS PA, mpp.\"ROLE_PROYEK\" AS RP, " +
+            " mpp.\"PROYEK\" AS P WHERE RF.id_karyawan_dinilai = ${idKaryawanProyek} AND RF.id_karyawan_dinilai = KPB.id AND " +
+            " KPA.id = RF.id_penilai AND KPA.id_karyawan = KA.id AND KA.id_pengguna = PA.id AND KPA.id_role = RP.id AND " +
+            " P.id = RF.id_proyek AND RF.periode = '${periode}' ORDER BY RF.tanggal DESC;")
     @Results(value = {
             @Result(property="id", column="id"),
             @Result(property="namaPenilai", column="namaPenilai"),
-            @Result(property="namaProyek", column="namaProyek"),
+            @Result(property="namaProyek", column="nama_proyek"),
             @Result(property="feedback", column="feedback"),
             @Result(property="rating", column="rating"),
-            @Result(property="tanggalPenilaian", column="tanggalPenilaian"),
-            @Result(property="rolePenilai", column="rolePenilai")
+            @Result(property="tanggalPenilaian", column="tanggal"),
+            @Result(property="rolePenilai", column="rolePenilai"),
+            @Result(property ="periode", column="periode")
     })
-    List<RatingFeedbackModel> selectRatingFeedbackPer(@Param("idKaryawan") Integer idKaryawan,
-                                                      @Param("periode") LocalDate periode);
+    List<RatingFeedbackModel> selectRatingFeedbackPer(@Param("idKaryawanProyek") Integer idKaryawanProyek,
+                                                     @Param("periode") LocalDate periode);
+
+
+
+
+
+//    @Select(" SELECT RF.id, PG.nama AS namaPenilai, P.nama_proyek AS namaProyek, RF.feedback, RF.rating, " +
+//            "        RF.tanggal AS tanggalPenilaian, RP.nama AS rolePenilai " +
+//            " FROM mpp.\"RATING_FEEDBACK\" AS RF, " +
+//            "     mpp.\"PROYEK\" AS P, " +
+//            "     mpp.\"KARYAWAN\" AS K," +
+//            "     mpp.\"PENGGUNA\" AS PG, " +
+//            "     mpp.\"KARYAWAN_PROYEK\" AS KP, " +
+//            "     mpp.\"ROLE_PROYEK\" AS RP " +
+//            " WHERE RF.id_proyek = P.id " +
+//            "    AND RP.id = KP.id_role " +
+//            "    AND KP.id_karyawan = RF.id_penilai " +
+//            "    AND KP.id_proyek = RF.id_proyek " +
+//            "    AND PG.id = K.id_pengguna " +
+//            "    AND RF.id_penilai = K.id " +
+//            "    AND RF.id_karyawan_dinilai = ${idKaryawan} " +
+//            "    AND RF.periode = '${periode}' " +
+//            "    ORDER BY periode DESC;")
+//    @Results(value = {
+//            @Result(property="id", column="id"),
+//            @Result(property="namaPenilai", column="namaPenilai"),
+//            @Result(property="namaProyek", column="namaProyek"),
+//            @Result(property="feedback", column="feedback"),
+//            @Result(property="rating", column="rating"),
+//            @Result(property="tanggalPenilaian", column="tanggalPenilaian"),
+//            @Result(property="rolePenilai", column="rolePenilai")
+//    })
+//    List<RatingFeedbackModel> selectRatingFeedbackPer(@Param("idKaryawan") Integer idKaryawan,
+//                                                      @Param("periode") LocalDate periode);
+
+
 
 }

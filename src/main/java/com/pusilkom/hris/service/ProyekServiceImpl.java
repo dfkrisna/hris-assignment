@@ -48,14 +48,11 @@ public class ProyekServiceImpl implements ProyekService {
 	}
 	public void addProyek(ProyekModel proyek) {
 		LocalDate start = proyek.getStartPeriode();
-		LocalDate end = proyek.getEndPeriode();
 
-		if(start != null && end != null) {
-			proyekMapper.addProyek(proyek);
-		} else if(start == null) {
-			proyekMapper.addProyekNullBoth(proyek);
-		} else {
+		if(start != null) {
 			proyekMapper.addProyekNullEnd(proyek);
+		} else {
+			proyekMapper.addProyekNullBoth(proyek);
 		}
 	}
     public void updateProyek(ProyekModel proyek) {

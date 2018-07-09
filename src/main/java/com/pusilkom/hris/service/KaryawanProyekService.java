@@ -25,4 +25,6 @@ public interface KaryawanProyekService {
     void updateKaryawanProyek(KaryawanProyekModel karyawanProyek);
 
     List<KaryawanProyekModel> getKaryawanProyekByProyek(Integer idProyek);
+	List<KaryawanProyekModel> selectKaryawanProyekByKaryawanPeriode (Integer idKaryawan, LocalDate periode);
+
 }

@@ -50,6 +50,15 @@ public class IndexController
     @Autowired
     DivisiService divisiService;
 
+    @Autowired
+    RatingFeedbackService ratingFeedbackService;
+
+    /**
+     * method untuk mengakses beranda utama
+     * @param model
+     * @param auth
+     * @return
+     */
     @GetMapping("/")
     @PreAuthorize("hasAuthority('GET_')")
     public String index(Model model, @NotNull Authentication auth) {
@@ -63,6 +72,11 @@ public class IndexController
         return "site/login";
     }
 
+    /**
+     * method untuk mendapatkan user yang saat ini login
+     * @param auth
+     * @return
+     */
     @ModelAttribute("currentUser")
     public UserWeb getLoggedInUser(@NotNull Authentication auth) {
         UserWeb user = (UserWeb) auth.getPrincipal();
@@ -79,9 +93,13 @@ public class IndexController
         return "login";
     }
 
-    //Placeholder untuk testing sebelum ada roles
+    /**
+     * method untuk menampilkan beranda eksekutif yang berisi matriks penugasan
+     * @param model
+     * @param periode
+     * @return
+     */
     @GetMapping(value = "/eksekutif")
-    @PreAuthorize("hasAuthority('GET_EKSEKUTIF')")
     public String indexEksekutif (Model model, @RequestParam(value = "periode", required = false) String periode)
     {
         LocalDate periodeDate;
@@ -117,6 +135,11 @@ public class IndexController
         }
     }
 
+    /**
+     * method untuk menampilkan beranda admin
+     * @param model
+     * @return
+     */
     @GetMapping("/admin")
     public String indexAdmin (Model model)
     {
@@ -129,7 +152,13 @@ public class IndexController
         return "index-admin";
     }
 
-    //Placeholder untuk testing sebelum ada roles
+    /**
+     * method ini digunakan untuk menampilkan index PMO yang berisi matriks penugasan
+     * @param model
+     * @param periode
+     * @param notification
+     * @return
+     */
     @GetMapping("/pmo")
     public String indexPMO (Model model,
                             @RequestParam(value = "periode", required = false) String periode,
@@ -176,7 +205,12 @@ public class IndexController
         return "index-pmo";
     }
 
-
+    /**
+     * method ini digunakan untuk menampilkan index manajer divisi yang berisi daftar anggota di divisinya
+     * @param model
+     * @param principal
+     * @return
+     */
     @GetMapping("/mngdivisi")
     public String indexManajerDivisi(Model model, Principal principal) {
         PenggunaModel pengguna = penggunaDAO.getPenggunaLama(principal.getName());
@@ -191,8 +225,10 @@ public class IndexController
 
         for(KaryawanModel karyawan:karyawanList) {
             List<PenugasanModel> penugasanList = penugasanService.getPenugasanList(karyawan.getId());
-            int ratingKaryawan = penugasanService.getAverageRating(penugasanList);
+            int ratingKaryawan = ratingFeedbackService.getAvgRatingKaryawan(karyawan.getId());
+//            int ratingKaryawan = penugasanService.getAverageRating(penugasanList);
             mapKaryawanRating.put(karyawan.getId(), ratingKaryawan);
+            System.out.println("size penugasan = " + penugasanList.size() + "rating karyawan = " + ratingKaryawan);
         }
 
         String dateToday = rekapMappingService.getCurrentDate();

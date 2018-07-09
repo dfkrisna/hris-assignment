@@ -181,11 +181,11 @@ public interface PenugasanMapper {
             "(SELECT (AVG(RB.persentase_kontribusi)) FROM mpp.\"REKAPITULASI_BULANAN\" AS RB " +
             "   WHERE RB.id_karyawan_proyek = KP.id) AS kontribusi, " +
             "(SELECT ROUND(AVG(RF.rating)) FROM mpp.\"RATING_FEEDBACK\" " +
-            "   AS RF WHERE RF.id_karyawan_dinilai = 1 AND RF.id_proyek = 1 ) AS rating, " +
+            "   AS RF WHERE RF.id_karyawan_dinilai = KP.id AND RF.id_proyek = ${idProyek} ) AS rating, " +
             "(SELECT P.nama FROM mpp.\"PENGGUNA\" AS P WHERE K.id_pengguna = P.id) AS nama_karyawan, " +
             "(SELECT RP.nama FROM mpp.\"ROLE_PROYEK\" AS RP WHERE RP.id = KP.id_role) AS role " +
             "FROM mpp.\"PROYEK\" AS P, mpp.\"KARYAWAN_PROYEK\" AS KP, mpp.\"KARYAWAN\" AS K " +
-            "WHERE P.id = KP.id_proyek AND K.id = KP.id_karyawan AND P.id = 1;\n")
+            "WHERE P.id = KP.id_proyek AND K.id = KP.id_karyawan AND P.id = ${idProyek};\n")
     @Results(value = {
             @Result(property="idProyek", column="id_proyek"),
             @Result(property="idKaryawan", column="id_kar"),

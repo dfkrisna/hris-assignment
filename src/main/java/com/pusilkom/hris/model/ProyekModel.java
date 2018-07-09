@@ -13,7 +13,7 @@ public class ProyekModel {
     private int id;
     private String kode;
     private String namaProyek;
-    private int idKlien;
+    private Integer idKlien;
     private String namaKlien;
     private String keterangan;
     private Integer idPmo;

@@ -32,6 +32,13 @@ public class RekapController {
     @Autowired
     RatingFeedbackService ratingFeedbackService;
 
+    /**
+     * method untuk membuka halaman rekap karyawan yang berisi rekap keseluruhan karyawan dan
+     * data riwayat penugasan karyawan pada proyek-proyek
+     * @param model
+     * @param idKaryawan
+     * @return
+     */
     @GetMapping(value = "/rekap/karyawan/riwayat/{idKaryawan}")
     public String rekapKaryawanRiwayat(Model model, @PathVariable Integer idKaryawan) {
         LocalDate  periodeDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1);
@@ -56,6 +63,13 @@ public class RekapController {
         return "rekap-karyawan";
     }
 
+    /**
+     * method untuk membuka halaman rekap karyawan yang berisi rekap feedback dan nilai karyawan pada periode tertentu
+     * @param model
+     * @param idKaryawan
+     * @param periode
+     * @return
+     */
     @RequestMapping(value = "/rekap/karyawan/feedback/{idKaryawan}", method = RequestMethod.GET)
     public String rekapKaryawanFeedback(Model model, @PathVariable Integer idKaryawan,
                                         @RequestParam(value = "periode", required = false) String periode) {
@@ -90,6 +104,13 @@ public class RekapController {
         return "rekap-karyawan-feedback";
     }
 
+    /**
+     * method untuk membuka halaman rekap proyek yang berisi data proyek dan anggota-anggota
+     * yang di-assign pada proyek
+     * @param model
+     * @param idProyek
+     * @return
+     */
     @RequestMapping(value = "/rekap/proyek/{idProyek}")
     public String rekapProyek(Model model, @PathVariable Integer idProyek) {
         ProyekModel proyek = proyekService.getProyekById(idProyek);

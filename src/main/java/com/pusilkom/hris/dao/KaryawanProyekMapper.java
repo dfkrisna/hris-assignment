@@ -110,4 +110,22 @@ public interface KaryawanProyekMapper {
             @Result(property="idRole", column="id_role")
     })
     List<KaryawanProyekModel> selectKaryawanProyekByProyek(@Param("idProyek") Integer idProyek);
+
+    @Select("SELECT KP.id, id_karyawan, id_proyek, start_periode, end_periode, timestamp_inisiasi, id_role\n" +
+            "FROM mpp.\"KARYAWAN_PROYEK\" AS KP\n" +
+            "WHERE start_periode <= '${periode}'\n" +
+            "\tAND (end_periode >= '${periode}' OR end_periode IS NULL)\n" +
+            " AND KP.id_karyawan = ${idKaryawan}" +
+            "ORDER BY start_periode ASC;")
+    @Results(value = {
+            @Result(property="id", column="id"),
+            @Result(property="idKaryawan", column="id_karyawan"),
+            @Result(property="idProyek", column="id_proyek"),
+            @Result(property="startPeriode", column="start_periode"),
+            @Result(property="endPeriode", column="end_periode"),
+            @Result(property="timestampInisiasi", column="timestamp_inisiasi"),
+            @Result(property="idRole", column="id_role")
+    })
+    List<KaryawanProyekModel> selectKaryawanProyekByKaryawanPeriode(@Param("idKaryawan") Integer idKaryawan,
+                                                                    @Param("periode") LocalDate periode);
 }

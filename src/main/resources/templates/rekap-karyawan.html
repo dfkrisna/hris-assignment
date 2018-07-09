@@ -51,14 +51,6 @@
 
                 <br/><br/><br/>
 
-                <h3 class="montserrat-med-bold">Nilai 6 Periode Terakhir</h3><hr/>
-                <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-10">
-                        <canvas id="myChart" width="350" height="150"></canvas>
-                    </div>
-                    <div class="col-sm-1"></div>
-                </div>
             </div>
             <br/><br/><br/>
             <ul class="nav nav-tabs">
@@ -84,54 +76,83 @@
                 </div>
             </div>
 
-            <table id="rekap-riwayat" class="table-mpp table table-hover" th:unless="${#lists.isEmpty(penugasanList)}">
-                <thead class="tabel-header">
-                <tr>
-                    <th class="montserrat-small-bold text-center">Proyek</th>
-                    <th class="montserrat-small-bold text-center">Role</th>
-                    <th class="montserrat-small-bold text-center">Rata-rata beban kerja</th>
-                    <th class="montserrat-small-bold text-center">Status proyek</th>
-                    <th class="montserrat-small-bold text-center">Periode</th>
-                    <th class="montserrat-small-bold text-center">Nilai</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="penugasan,iterationStatus: ${penugasanList}">
-                    <th><a th:text="${penugasan.kodeProyek + ' (' + penugasan.namaProyek+ ')'}" th:href="${'/rekap/proyek/' + penugasan.idProyek}">Proyek</a></th>
-                    <td class="text-center" th:text="${penugasan.role}">Role</td>
-                    <td class="text-center" th:text="${penugasan.persentaseKontribusi + '%'}">Rata-rata beban kerja</td>
-                    <td class="text-center" th:text="${penugasan.statusProyek}">Status proyek</td>
-                    <td class="text-center" th:text="${penugasan.periode}">Periode</td>
-                    <td class="text-center" th:text="${penugasan.intRating}">Nilai</td>
-                </tr>
-                </tbody>
-            </table>
-                <script th:inline="javascript">
-                    /*<![CDATA[*/
-
-                    var ctx = document.getElementById("myChart").getContext('2d');
-                    var myChart = new Chart(ctx, {
-                        type: 'line',
-                        data: {
-                            labels: /*[[${chartLabel}]]*/ [],
-                            datasets: [{
-                                data: /*[[${chartValueCum}]]*/ [],
-                                label: "Nilai Kumulatif",
-                                borderColor: "#FFCF26",
-                                fill: false
-                            },
-                                {
-                                    data: /*[[${chartValueAvg}]]*/ [],
-                                    label: "Nilai Per Periode",
-                                    borderColor: "blue",
-                                    fill: false
-                                }
-                            ]
-                        },
-                        options: {}
-                    });
-                    /*]]>*/
-                </script>
+            <div  th:unless="${#lists.isEmpty(penugasanList)}">
+                <table id="rekap-riwayat" class="table-mpp table table-hover">
+                    <thead class="tabel-header">
+                    <tr>
+                        <th class="montserrat-small-bold text-center">Proyek</th>
+                        <th class="montserrat-small-bold text-center">Role</th>
+                        <th class="montserrat-small-bold text-center">Rata-rata beban kerja</th>
+                        <th class="montserrat-small-bold text-center">Status proyek</th>
+                        <th class="montserrat-small-bold text-center">Periode</th>
+                        <th class="montserrat-small-bold text-center">Nilai (1-100)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="penugasan,iterationStatus: ${penugasanList}">
+                        <th><a th:text="${penugasan.kodeProyek + ' (' + penugasan.namaProyek+ ')'}" th:href="${'/rekap/proyek/' + penugasan.idProyek}">Proyek</a></th>
+                        <td class="text-center" th:text="${penugasan.role}">Role</td>
+                        <td class="text-center" th:text="${penugasan.persentaseKontribusi + '%'}">Rata-rata beban kerja</td>
+                        <td class="text-center" th:text="${penugasan.statusProyek}">Status proyek</td>
+                        <td class="text-center" th:text="${penugasan.periode}">Periode</td>
+                        <td th:if="${penugasan.intRating==0}" class="montserrat-small text-center text-value">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${penugasan.intRating}"></p>
+                        </td>
+                        <td th:if="${penugasan.intRating>0 && penugasan.intRating<=60}" class="montserrat-small text-center text-value">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${penugasan.intRating}"></p>
+                        </td>
+                        <td th:if="${penugasan.intRating>60 && penugasan.intRating<=80}" class="montserrat-small text-center text-value">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${penugasan.intRating}"></p>
+                        </td>
+                        <td th:if="${penugasan.intRating>80 && penugasan.intRating<=100}" class="montserrat-small text-center text-value">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${penugasan.intRating}"></p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br/>
+                <div>
+                    <div class="d-flex flex-row mb-1">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                Keterangan Rentang Nilai:
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row mb-1">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                <img class="d-inline icon-sidebar mr-1" src="/img/gold-star.png">: 81-100
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row mb-1">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                <img class="d-inline icon-sidebar mr-1" src="/img/silver-star.png">: 61-80
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row mb-1">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                <img class="d-inline icon-sidebar mr-1" src="/img/bronze-star.png">: 1-60
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row mb-2">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                <img class="d-inline icon-sidebar mr-1" src="/img/black-star.png">: Belum Dinilai
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div th:unless="${karyawan != null}" class="row">
             <br/><br/>
@@ -146,7 +167,6 @@
         </div>
 
     </main >
-
 
     <div th:replace="fragments/fragment :: footer"></div>
 

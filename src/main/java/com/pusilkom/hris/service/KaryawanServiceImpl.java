@@ -92,10 +92,12 @@ public class KaryawanServiceImpl implements KaryawanService{
 	}
 
 	@Override
-	public List<FeedbackRatingModel> getRekanSeproyekFeedback(List<Integer> idProyek, int idKaryawan, LocalDate periodeNow, int idPenilai) {
+	public List<FeedbackRatingModel> getRekanSeproyekFeedback(List<Integer> idProyek, int idKaryawan, LocalDate periodeNow) {
 		ArrayList<FeedbackRatingModel> hasil = new ArrayList<>();
+		int idPenilai = 0;
 
 		for (int i = 0; i < idProyek.size(); i++){
+			idPenilai = karyawanMapper.getKaryawanIdPenilai(idKaryawan, idProyek.get(i));
 			List<FeedbackRatingModel> rekan = karyawanMapper.getRekanSeproyekFeedback(idProyek.get(i), idKaryawan, periodeNow, idPenilai);
 
 			if(rekan.size() >= 1) {
@@ -138,8 +140,8 @@ public class KaryawanServiceImpl implements KaryawanService{
 	}
 
 	@Override
-	public int getKaryawanIdPenilai(int idKaryawan) {
-		return karyawanMapper.getKaryawanIdPenilai(idKaryawan);
+	public int getKaryawanIdPenilai(int idKaryawan, int idProyek) {
+		return karyawanMapper.getKaryawanIdPenilai(idKaryawan, idProyek);
 	}
 
 	@Override

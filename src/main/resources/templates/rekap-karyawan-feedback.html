@@ -51,14 +51,6 @@
 
                 <br/><br/><br/>
 
-                <h3 class="montserrat-med-bold">Nilai 6 Periode Terakhir</h3><hr/>
-                <div class="row">
-                    <div class="col-sm-1"></div>
-                    <div class="col-sm-10">
-                        <canvas id="myChart" width="350" height="150"></canvas>
-                    </div>
-                    <div class="col-sm-1"></div>
-                </div>
             </div>
             <br/><br/><br/>
             <ul class="nav nav-tabs">
@@ -96,58 +88,107 @@
 
             <br/><br/>
 
-            <div th:if="${#lists.isEmpty(feedbackList)}">
-                <div class="row">
-                    <div class="col-2"></div>
-                    <div class="col-8 text-center">
-                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">Tidak ada </h2>
-                        <h2 class="d-inline text-value text-center text-muted montserrat-med">feedback untuk karyawan</h2>
-                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2"> pada periode ini</h2>
-                    </div>
-                    <div class="col-2"></div>
+            <h3 class="montserrat-med-bold">Nilai 6 Periode Terakhir</h3><hr/>
+            <div class="row">
+                <div class="col-sm-1"></div>
+                <div class="col-sm-10">
+                    <canvas id="myChart" width="350" height="150"></canvas>
                 </div>
-
-                <br/><br/><br/>
-
+                <div class="col-sm-1"></div>
             </div>
 
-            <table id="rekap-feedback" class="table-mpp table table-hover" th:unless="${#lists.isEmpty(feedbackList)}">
-                <thead class="tabel-header">
-                <tr>
-                    <th class="text-center">Nama Penilai</th>
-                    <th class="text-center">Proyek</th>
-                    <th class="text-center">Role</th>
-                    <th class="text-center">Feedback</th>
-                    <th class="text-center">Nilai</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="feedback,iterationStatus: ${feedbackList}">
-                    <th><a th:text="${feedback.namaPenilai}" th:href="${'/rekap/karyawan/riwayat/' + feedback.idPenilai}">Nama Penilai</a></th>
-                    <td class="text-center" th:text="${feedback.kodeProyek}">Kode Proyek</td>
-                    <td class="text-center" th:text="${feedback.rolePenilai}">Role Penilai</td>
-                    <td class="text-center" th:text="${feedback.feedback}">Feedback</td>
-                    <td th:if="${feedback.rating==0}" class="montserrat-small text-center text-value">
-                        <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
-                        <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
-                    </td>
-                    <td th:if="${feedback.rating>0 && feedback.rating<=60}" class="montserrat-small text-center text-value">
-                        <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
-                        <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
-                    </td>
-                    <td th:if="${feedback.rating>60 && feedback.rating<=80}" class="montserrat-small text-center text-value">
-                        <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
-                        <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
-                    </td>
-                    <td th:if="${feedback.rating>80 && feedback.rating<=100}" class="montserrat-small text-center text-value">
-                        <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
-                        <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
+            <br/><br/>
 
-            <link rel="stylesheet" type="text/css" media="screen" th:href="'http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css'">
+            <div th:if="${#lists.isEmpty(feedbackList)}">
+                    <div class="row">
+                        <div class="col-2"></div>
+                        <div class="col-8 text-center">
+                            <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">Tidak ada</h2>
+                            <h2 class="d-inline text-value text-center text-muted montserrat-med">feedback untuk karyawan</h2>
+                            <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2"> pada periode ini</h2>
+                        </div>
+                        <div class="col-2"></div>
+                    </div>
+
+                    <br/><br/><br/>
+                </div>
+                <div th:unless="${#lists.isEmpty(feedbackList)}">
+                <table id="rekap-feedback" class="table-mpp table table-hover">
+                    <thead class="tabel-header">
+                    <tr>
+                        <th class="text-center">Nama Penilai</th>
+                        <th class="text-center">Proyek</th>
+                        <th class="text-center">Role</th>
+                        <th class="text-center">Feedback</th>
+                        <th class="text-center">Nilai (1-100)</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="feedback,iterationStatus: ${feedbackList}">
+                        <th><a th:text="${feedback.namaPenilai}" th:href="${'/rekap/karyawan/riwayat/' + feedback.idPenilai}">Nama Penilai</a></th>
+                        <td class="text-center" th:text="${feedback.kodeProyek}">Kode Proyek</td>
+                        <td class="text-center" th:text="${feedback.rolePenilai}">Role Penilai</td>
+                        <td class="text-center" th:text="${feedback.feedback}">Feedback</td>
+                        <td th:if="${feedback.rating==0}" class="montserrat-small text-center text-value">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
+                        </td>
+                        <td th:if="${feedback.rating>0 && feedback.rating<=60}" class="montserrat-small text-center text-value">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
+                        </td>
+                        <td th:if="${feedback.rating>60 && feedback.rating<=80}" class="montserrat-small text-center text-value">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
+                        </td>
+                        <td th:if="${feedback.rating>80 && feedback.rating<=100}" class="montserrat-small text-center text-value">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <br/>
+                <div>
+                    <div class="d-flex flex-row mb-1">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                Keterangan Rentang Nilai:
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row mb-1">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                <img class="d-inline icon-sidebar mr-1" src="/img/gold-star.png">: 81-100
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row mb-1">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                <img class="d-inline icon-sidebar mr-1" src="/img/silver-star.png">: 61-80
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row mb-1">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                <img class="d-inline icon-sidebar mr-1" src="/img/bronze-star.png">: 1-60
+                            </h3>
+                        </div>
+                    </div>
+                    <div class="d-flex flex-row mb-2">
+                        <div class="col text-center">
+                            <h3 class="montserrat-small text-muted">
+                                <img class="d-inline icon-sidebar mr-1" src="/img/black-star.png">: Belum Dinilai
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
             <script type="text/javascript">
                 $(function() {
                     $('.date-picker').datepicker( {
@@ -195,7 +236,7 @@
         </div>
 
         <div th:unless="${karyawan != null}" class="row">
-            <br/><br/>
+            <br/><br/><br/>
             <div class="col-2"></div>
             <div class="col-8 text-center">
                 <h3 class="d-inline text-sub text-center mr-2 montserrat">Karyawan</h3>

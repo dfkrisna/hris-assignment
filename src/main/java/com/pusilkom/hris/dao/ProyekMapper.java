@@ -117,9 +117,9 @@ public interface ProyekMapper {
     })
     ProyekModel selectProyekByIdPmo(@Param("idProyek") Integer idProyek);
 
-    @Insert("INSERT INTO mpp.\"STATUS_PENGERJAAN_PROYEK\" (id_status,id_proyek,periode)"+
-            "VALUES (${idStatus}, ${idProyek},'${periode}' )" )
-    void addProyekStatus(@Param("idProyek") Integer idProyek, @Param("idStatus") Integer idStatus, LocalDate periode);
+    @Insert("INSERT INTO mpp.\"STATUS_PENGERJAAN_PROYEK\" (id_status,id_proyek,periode,timestamp)"+
+            "VALUES (${idStatus}, ${idProyek},'${periode}',now() )" )
+    void addProyekStatus(@Param("idProyek") Integer idProyek, @Param("idStatus") Integer idStatus, @Param("periode") LocalDate periode);
 
     @Select("SELECT DISTINCT id, kode, nama_proyek, id_klien, keterangan, id_pmo, id_parent_project, id_project_lead, start_periode, end_periode\n" +
             "            FROM mpp.\"PROYEK\"\n" +

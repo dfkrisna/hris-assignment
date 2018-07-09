@@ -83,6 +83,11 @@
 	font-weight: 700;
 }
 
+.montserrat-big{
+	font-family: 'Montserrat';
+	font-size: 18px;
+}
+
 .montserrat-bold{
 	font-family: 'Montserrat';
 	font-weight: bold;

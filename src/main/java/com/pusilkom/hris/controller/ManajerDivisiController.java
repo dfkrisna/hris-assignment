@@ -39,6 +39,14 @@ public class ManajerDivisiController {
     @Autowired
     KaryawanProyekService karyawanProyekService;
 
+    /**
+     * method ini digunakan untuk menampilkan detail karyawan yang merupakan bawahan manajer divisi
+     * @param model
+     * @param periode
+     * @param idKaryawan
+     * @param notification
+     * @return
+     */
     @GetMapping(value="/mngdivisi/rekap/{idKar}")
     public String showDetailKaryawan(Model model,
                                      @RequestParam(value = "periode", required = false) String periode,
@@ -89,16 +97,38 @@ public class ManajerDivisiController {
         model.addAttribute("current", periodeDate);
         model.addAttribute("previous", periodeDate.minusMonths(1));
 
-        List<RatingFeedbackModel> listRF;
-        listRF = ratingFeedbackService.selectRatingFeedbackPer(idKaryawan,periodeDate);
+        //ambil dulu id karpro
+        List<KaryawanProyekModel> dicari = karyawanProyekService.selectKaryawanProyekByKaryawanPeriode(idKaryawan,periodeDate);
         boolean isEmptyRF = false;
-        if(listRF.isEmpty()) { isEmptyRF = true; }
-        model.addAttribute("isEmptyRF",isEmptyRF);
-        model.addAttribute("listRF",listRF);
+        if(dicari.isEmpty()) {
+            isEmptyRF = true;
+            return "mngdivisi-penilaian";
+        } else {
 
-        return "mngdivisi-penilaian";
+            List<RatingFeedbackModel> listRF=null;
+
+            for(KaryawanProyekModel karpro : dicari) {
+                listRF = ratingFeedbackService.selectRatingFeedbackPer(karpro.getId(), periodeDate);
+            }
+
+            if (listRF.isEmpty() || listRF==null) {
+                isEmptyRF = true;
+            }
+            model.addAttribute("isEmptyRF", isEmptyRF);
+            model.addAttribute("listRF", listRF);
+
+            return "mngdivisi-penilaian";
+        }
     }
 
+    /**
+     * method ini digunakan untuk memproses finalisasi evaluasi diri anggota divisi
+     * @param model
+     * @param ra
+     * @param periode
+     * @param idKarProy
+     * @return
+     */
     @PostMapping(value = "/mngdivisi/rekap/finalisasi")
     public String finalisasi(Model model,
                              RedirectAttributes ra,

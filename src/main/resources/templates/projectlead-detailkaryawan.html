@@ -16,7 +16,7 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="roboto breadcrumb-item active" aria-current="page">
-                    <a th:href="'/karyawan'">Beranda</a>
+                    <a href="/karyawan">Beranda</a>
                 </li>
                 <li class="roboto breadcrumb-item active" aria-current="page">
                     <a th:href="'karyawan/projectlead/detail/' + ${proyek.id} + '/' + ${karyawan.id}">Detail Karyawan</a>
@@ -50,7 +50,7 @@
     <nav>
         <div class="nav nav-tabs" id="nav-tab" role="tablist">
             <a class="nav-item nav-link active montserrat-small-bold" id="nav-penilaian-mandiri-tab" data-toggle="tab" href="#nav-penilaian-mandiri" role="tab" aria-controls="nav-penilaian-mandiri" aria-selected="true">Rekap Evaluasi Diri</a>
-            <a class="nav-item nav-link montserrat-small-bold" id="nav-feedback-tab" data-toggle="tab" th:href="'#nav-feedback'" role="tab" aria-controls="nav-feedback" aria-selected="false">Feedback Karyawan</a>
+            <a class="nav-item nav-link montserrat-small-bold" id="nav-feedback-tab" data-toggle="tab" href="#nav-feedback" role="tab" aria-controls="nav-feedback" aria-selected="false">Feedback Karyawan</a>
         </div>
     </nav>
     <div class="tab-content" id="nav-tabContent">
@@ -64,8 +64,8 @@
                 <div class="row">
                     <div class="col-2"></div>
                     <div class="col-8 text-center">
-                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">Karyawan belum mendapat </h2>
-                        <h2 class="d-inline text-value text-center text-muted montserrat-med-bold">feedback dari rekan </h2>
+                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">Karyawan belum mengisi </h2>
+                        <h2 class="d-inline text-value text-center text-muted montserrat-med-bold">evaluasi diri </h2>
                         <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">pada periode ini</h2>
                     </div>
                     <div class="col-2"></div>

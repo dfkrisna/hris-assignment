@@ -26,6 +26,11 @@ public class AdminController
     @Autowired
     PegawaiService pegawaiDAO;
 
+    /**
+     * Method ini mengarahkan user ke halaman form add pengguna
+     * @param model
+     * @return
+     */
     @GetMapping("/admin/addpengguna")
     public String addPenggunaForm(Model model)
     {
@@ -40,6 +45,12 @@ public class AdminController
         return "admin-addpengguna";
     }
 
+    /**
+     * Method ini melakukan post ke database untuk menambahkan pengguna
+     * @param model
+     * @param newPengguna
+     * @return
+     */
     @PostMapping(value = "/admin/addpengguna/submit")
     public String addPenggunaSubmit(Model model, PenggunaModel newPengguna)
     {
@@ -54,6 +65,13 @@ public class AdminController
         return "index-admin";
     }
 
+
+    /**
+     * Method ini akan menampilkan halaman form update pengguna beserta field yang sudah terisi
+     * @param model
+     * @param id
+     *
+     */
     @GetMapping("/admin/updatepengguna/{id}")
     public String updatePengguna (Model model, @PathVariable(value = "id") int id)
     {
@@ -79,6 +97,11 @@ public class AdminController
 
     }
 
+
+    /*
+     * Method ini berfungsi untuk melakukan pengolahan data yang di-update pada form update pengguna
+     * termasuk nama dan role pengguna
+     */
     @PostMapping(value = "/admin/updatepengguna/submit")
     public String updatePenggunaSubmit(Model model, PenggunaModel pengguna,
                                        @RequestParam(value="roleChecked") List<String> roleBaru)
@@ -90,6 +113,7 @@ public class AdminController
 
         String[] st = pengguna.getId_pegawai_temp().split(":");
 
+        //menginisiasi list role lama dan role baru yang akan diolah
         List<String> roleBaruToCompare = new ArrayList<String>();
         List<String> roleLamaToCompare = new ArrayList<String>();
         for(int i = 0; i< roleBaru.size(); i++) {
@@ -110,6 +134,7 @@ public class AdminController
         String id = st[0];
         String namaBaru = st[1];
 
+        //membatasi hanya 2 role yang dapat dipilih oleh pengguna
         if(roleBaruToCompare.size() > 2) {
             PenggunaModel penggunaz = penggunaDAO.getPengguna(id_pengguna);
             List<PegawaiModel> pegawais = pegawaiDAO.getAllAvailablePegawai();
@@ -136,6 +161,9 @@ public class AdminController
         String hasilCompare = penggunaDAO.compareRole(roleLamaToCompare, roleBaruToCompare);
         System.out.println(hasilCompare);
 
+        //menghandle berbagai kemungkinan perubahan role seperti penambahan role, pergantian role, handling
+        //jika role lebih dari satu, dan berbagai case lain seperti nama saja yang berubah, role saja
+        //yang berubah, keduanya berubah, dan keduanya tidak berubah
         if(namaBaru.equalsIgnoreCase(penggunaLama.getNama())) {
 
             if(hasilCompare.equalsIgnoreCase("sama")) {
@@ -228,6 +256,10 @@ public class AdminController
         }
     }
 
+
+    /*
+     * method yang berfungsi untuk menghapus pengguna dari sistem
+     */
     @GetMapping("/admin/deletepengguna/{id}")
     public String deletePengguna (Model model, @PathVariable(value = "id") int id)
     {

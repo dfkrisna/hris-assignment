@@ -87,11 +87,12 @@ public interface KaryawanMapper {
     })
     List<KaryawanModel> selectKaryawanByDivisi(@Param("idDivisi") int idDivisi);
 
-    @Select("select distinct rt.id_penilai from " +
+    @Select("select distinct kp.id from " +
             "mpp.\"RATING_FEEDBACK\" as rt, " +
             "mpp.\"KARYAWAN_PROYEK\" as kp " +
-            "where kp.id_karyawan = #{idKaryawan} and kp.id = rt.id_penilai;")
-    int getKaryawanIdPenilai(@Param("idKaryawan") int idKaryawan);
+            "where kp.id_karyawan = #{idKaryawan} and kp.id_proyek = #{idProyek}")
+    int getKaryawanIdPenilai(@Param("idKaryawan") int idKaryawan,
+                             @Param("idProyek") int idProyek);
 
     @Select("select distinct id from mpp.\"PENGGUNA\" where username = #{username}")
     int getKaryawanIdByUsername(@Param("username") String username);

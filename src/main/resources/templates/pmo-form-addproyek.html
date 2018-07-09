@@ -1,12 +1,11 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/fragment :: header-title">
-
 </head>
 
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
-<link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>-->
+<!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>-->
+<!--<link rel="stylesheet" type="text/css" media="screen" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">-->
 
 
 <body>
@@ -33,7 +32,7 @@
     </div>
 
     <div class="d-flex flex-row mb-2 ">
-        <form action="/proyek/tambah" th:object="${proyek}" method="post" class="form-horizontal" style="width: 70%">
+        <form th:action="@{/proyek/tambah}" th:object="${proyek}" method="post" class="form-horizontal" style="width: 70%">
             <div class="form-row mb-3">
                 <div class="form-group col mr-2">
                     <label class="roboto">Nama Proyek</label>
@@ -49,7 +48,7 @@
                 <div class="form-group col">
 
                     <label class="roboto">Klien Proyek</label>
-                    <select class="form-control form-rounded">
+                    <select class="form-control form-rounded" th:field="*{idKlien}">
                         <option value="">Pilih Klien Proyek</option>
                         <option th:each="klient : ${listklien}" th:value="${klient.getId()}" th:text="${klient.getNama()}"></option>
                     </select>
@@ -69,7 +68,7 @@
 
                 <div class="form-group col mr-2">
                     <label class="roboto">Periode Mulai</label>
-                    <input name="startdate" id="date-picker" class="form-control form-rounded"  required readonly/>
+                    <input name="startdate" id="date-picker" class="form-control form-rounded"  required readonly="readonly" style="background-color: transparent;"/>
 
                 </div>
                 <!--<div class="form-group col">-->
@@ -128,26 +127,9 @@
 
 
 </main >
-
-
-<div th:replace="fragments/fragment :: footer"></div>
-
-
-
-</body>
-
 <script type="text/javascript">
     $(function() {
         $("#date-picker").datepicker( {
-            changeMonth: true,
-            changeYear: true,
-            showButtonPanel: true,
-            dateFormat: 'MM yy',
-            onClose: function(dateText, inst) {
-                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
-            }
-        });
-        $("#date-picker2").datepicker( {
             changeMonth: true,
             changeYear: true,
             showButtonPanel: true,
@@ -162,5 +144,11 @@
     .ui-datepicker-calendar {
         display: none;
     }
-</style>
+</style>f
+
+<div th:replace="fragments/fragment :: footer"></div>
+
+</body>
+
+
 </html>

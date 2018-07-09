@@ -79,5 +79,8 @@ public class KaryawanProyekServiceImpl implements KaryawanProyekService{
 	public List<KaryawanProyekModel> getKaryawanProyekByProyek(Integer idProyek) {
 		return karyawanProyekMapper.selectKaryawanProyekByProyek(idProyek);
 	}
+	public List<KaryawanProyekModel> selectKaryawanProyekByKaryawanPeriode (Integer idKaryawan, LocalDate periode) {
+		return karyawanProyekMapper.selectKaryawanProyekByKaryawanPeriode(idKaryawan,periode);
+	}
 
 }

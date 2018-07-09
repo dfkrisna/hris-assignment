@@ -40,6 +40,15 @@ public class AssignmentController {
     @Autowired
     PenugasanService penugasanService;
 
+    /**
+     * method ini digunakan untuk menampilkan form tambah penugasan karyawan pada suatu proyek melalui matriks
+     * @param model
+     * @param tahun
+     * @param bulan
+     * @param idKaryawan
+     * @param idProyek
+     * @return
+     */
     @GetMapping("/pmo/assign/{idKaryawan}/{idProyek}/{tahun}/{bulan}")
     public String assignKaryawanMatrix(Model model,
                                        @PathVariable(value = "tahun", required = true) Integer tahun,
@@ -74,6 +83,17 @@ public class AssignmentController {
         return "pmo-form-assign-add-matrix";
     }
 
+    /**
+     * method ini digunakan untuk menyimpan penugasan baru karyawan pada suatu proyek melalui matriks
+     * @param model
+     * @param idKaryawan
+     * @param idProyek
+     * @param persenKontribusi
+     * @param idRole
+     * @param periodeMulai
+     * @param periodeSelesai
+     * @return
+     */
     @PostMapping(value = "/pmo/assign/{idKaryawan}/{idProyek}")
     public String saveNewAssignmentMatrix(Model model,
                                           RedirectAttributes ra,
@@ -84,7 +104,12 @@ public class AssignmentController {
                                           @RequestParam(value = "periodeMulai") String periodeMulai,
                                           @RequestParam(value = "periodeSelesai") String periodeSelesai) {
         KaryawanModel karyawan = karyawanService.getKaryawanById(idKaryawan);
-        KaryawanProyekModel karyawanProyek = new KaryawanProyekModel();
+        KaryawanProyekModel karyawanProyek = karyawanProyekService.getKaryawanProyekByKaryawanandProyek(idKaryawan, idProyek);
+
+        if(karyawanProyek == null) {
+            karyawanProyek = new KaryawanProyekModel();
+            System.out.println("masuk gaa");
+        }
 
         DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive() .appendPattern("d MMMM yyyy").toFormatter(Locale.ENGLISH);
 
@@ -98,9 +123,18 @@ public class AssignmentController {
             karyawanProyek.setEndPeriode(LocalDate.of(endPeriode.getYear(), endPeriode.getMonthValue(), 1));
         }
 
-        System.out.println(karyawanProyek.getStartPeriode());
+        System.out.println("ini hasil nyari db " + karyawanProyekService.getKaryawanProyekByKaryawanandProyek(idKaryawan, idProyek));
 
-        karyawanProyekService.addKaryawanProyekMatrix(karyawanProyek, idKaryawan, idProyek, idRole);
+        if(karyawanProyekService.getKaryawanProyekByKaryawanandProyek(idKaryawan, idProyek) == null) {
+            karyawanProyekService.addKaryawanProyekMatrix(karyawanProyek, idKaryawan, idProyek, idRole);
+            System.out.println("knp masuk gaa");
+        } else {
+            karyawanProyek.setEndPeriode(null);
+            karyawanProyek.setStartPeriode(karyawanProyekService.getKaryawanProyekByKaryawanandProyek(idKaryawan, idProyek).getStartPeriode());
+            System.out.println("alhamdulillah gaa");
+
+            karyawanProyekService.updateKaryawanProyek(karyawanProyek);
+        }
 
         KaryawanProyekModel karyawanAdded = karyawanProyekService.getKaryawanProyekByKaryawanandProyek(idKaryawan, idProyek);
 
@@ -120,6 +154,14 @@ public class AssignmentController {
         return "redirect:/pmo";
     }
 
+    /**
+     * method ini digunakan untuk menampilkan form ubah penugasan karyawan pada suatu proyek melalui matriks
+     * @param model
+     * @param tahun
+     * @param bulan
+     * @param idKaryawanProyek
+     * @return
+     */
     @RequestMapping(value = "/pmo/update_assignment/{idKaryawanProyek}/{tahun}/{bulan}")
     public String updateAssignmentMatrix(Model model,
                                          @PathVariable(value = "tahun", required = true) Integer tahun,
@@ -158,6 +200,17 @@ public class AssignmentController {
         return "pmo-form-assign-upd-matrix";
     }
 
+    /**
+     * method ini digunakan untuk menyimpan perubahan penugasan karyawan pada suatu proyek melalui matriks
+     * @param model
+     * @param ra
+     * @param idKaryawanProyek
+     * @param persenKontribusi
+     * @param periodeRekap
+     * @param action
+     * @param endPeriode
+     * @return
+     */
     @RequestMapping(value = "/pmo/update_assignment/{idKaryawanProyek}",method = RequestMethod.POST)
     public String updateAssignmentMatrix(Model model,
                                          RedirectAttributes ra,
@@ -202,6 +255,12 @@ public class AssignmentController {
         return "redirect:/pmo";
     }
 
+    /**
+     * method ini digunakan untuk menampilkan daftar rekomendasi karyawan setelah membuat proyek
+     * @param model
+     * @param idProyek
+     * @return
+     */
     @GetMapping("/pmo/proyek/tambah/assign/{idProyek}")
     public String assignKaryawan(Model model, @PathVariable(value = "idProyek") int idProyek) {
         ProyekModel proyek = proyekService.getProyekById(idProyek);
@@ -221,6 +280,13 @@ public class AssignmentController {
         return "pmo-karyawan-recommendation";
     }
 
+    /**
+     * method ini digunakan untuk menampilkan daftar form penugasan baru karyawan pada suatu proyek setelah proyek dibuat
+     * @param model
+     * @param idProyek
+     * @param karyawanIDList
+     * @return
+     */
     @PostMapping(value = "pmo/proyek/tambah/assign/{idProyek}")
     public String assignKaryawan(Model model, @PathVariable(value = "idProyek") int idProyek,
                                  @RequestParam(value = "selectedKaryawan") List<Integer> karyawanIDList) {
@@ -248,6 +314,18 @@ public class AssignmentController {
         return "pmo-form-assign-list";
     }
 
+    /**
+     * method ini digunakan untuk menyimpan penugasan yang dibuat setelah proyek dibuat
+     * @param model
+     * @param idProyek
+     * @param idKaryawan
+     * @param listKaryawanID
+     * @param persenKontribusi
+     * @param idRole
+     * @param periodeMulai
+     * @param periodeSelesai
+     * @return
+     */
     @PostMapping(value = "pmo/proyek/tambah/assign/{idKaryawan}/{idProyek}")
     public String assignKaryawan(Model model, @PathVariable(value = "idKaryawan") int idKaryawan,
                                  @PathVariable(value = "idProyek") int idProyek,
@@ -270,7 +348,11 @@ public class AssignmentController {
         KaryawanModel karyawan = karyawanService.getKaryawanById(idKaryawan);
         ProyekModel proyek = proyekService.getProyekById(idProyek);
 
-        KaryawanProyekModel karyawanProyek = new KaryawanProyekModel();
+        KaryawanProyekModel karyawanProyek = karyawanProyekService.getKaryawanProyekByKaryawanandProyek(idKaryawan, idProyek);
+
+        if(karyawanProyek == null) {
+            karyawanProyek = new KaryawanProyekModel();
+        }
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
 
@@ -287,7 +369,13 @@ public class AssignmentController {
             karyawanProyek.setEndPeriode(LocalDate.of(periodeSelesaiDate.getYear(), periodeSelesaiDate.getMonthValue(), 1));
         }
 
-        karyawanProyekService.addKaryawanProyekMatrix(karyawanProyek, idKaryawan, idProyek, idRole);
+        if(karyawanProyekService.getKaryawanProyekByKaryawanandProyek(idKaryawan, idProyek) == null) {
+            karyawanProyekService.addKaryawanProyekMatrix(karyawanProyek, idKaryawan, idProyek, idRole);
+        } else {
+            karyawanProyek.setEndPeriode(null);
+            karyawanProyek.setStartPeriode(karyawanProyekService.getKaryawanProyekByKaryawanandProyek(idKaryawan, idProyek).getStartPeriode());
+            karyawanProyekService.updateKaryawanProyek(karyawanProyek);
+        }
 
         KaryawanProyekModel karyawanAdded = karyawanProyekService.getKaryawanProyekByKaryawanandProyek(idKaryawan, idProyek);
 

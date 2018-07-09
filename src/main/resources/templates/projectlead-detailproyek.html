@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
 <head th:replace="fragments/fragment :: header-title">
 </head>
 <body>
@@ -12,13 +12,13 @@
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="roboto breadcrumb-item active" aria-current="page">
-                    <a th:href="'/karyawan'">Beranda</a>
+                    <a href="/karyawan">Beranda</a>
                 </li>
                 <li class="roboto breadcrumb-item active" aria-current="page">
-                    <a th:href="'/karyawan/projectlead'">Proyek Dipimpin</a>
+                    <a href="/karyawan/projectlead">Proyek Dipimpin</a>
                 </li>
                 <li class="roboto breadcrumb-item active" aria-current="page">
-                    <a th:href="'/karyawan/projectlead'">Detail Proyek</a>
+                    <a href="/karyawan/projectlead">Detail Proyek</a>
                 </li>
             </ol>
         </nav>
