@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title></title>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="css/home.css">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+</head>
+<body>
+    <nav th:fragment="navbar" id="navbar-utama" class="navbar bg-light sticky-top">
+        <div class="navbar-header col-md-2">
+            <a class="navbar-brand" ref="#">
+                <img id="logo-pusilkom" alt="pusilkom" src="img/mainsite.png">
+            </a>
+            <span class="montserrat navbar-brand col-sm-3 col-md-2 mr-0 text-dark">MODUL <strong>PENUGASAN</strong> DAN <strong>PENILAIAN</strong></span>
+        </div>
+        <ul class="nav navbar-nav col-md-8 text-right">
+            <li class="nav-item text-nowrap">
+                <span class="nav-link text-secondary"><img id="icon-navbar" class="mr-2 mb-1" alt="pusilkom" src="img/avatar.png">Jonathan Joestar</span>
+            </li>
+        </ul>
+        <form class="navbar-form navbar-rightcol-md-2" method="post">
+            <input class="btn btn-outline-danger" type="submit" value="logout"/>
+        </form>
+    </nav>
+
+    <div th:fragment="sidebar" id="page-content" class="container-fluid d-block">
+        <div class="row">
+            <nav id="pusilkom-sidebar" class="col-md-2 d-none d-md-block sidebar bg-dark">
+                <div class="sidebar-sticky">
+                    <ul class="nav flex-column mt-4">
+                        <li class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" href="#">
+                                <img>Beranda
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" href="#">
+                                <img class="icon-sidebar mr-2 mb-1" src="img/yellow-home.png">Beranda
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" href="#">
+                                <img class="icon-sidebar mr-2 mb-1" src="img/yellow-people.png">Rekan Seproyek
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" href="#">
+                                <img class="icon-sidebar mr-2 mb-1" src="img/yellow-clock.png">Riwayat Penugasan
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <footer th:fragment="footer" id="pusilkom-footer" class="col-md-12 bg-dark p-2">
+        <div class="container">
+            <a class="navbar-brand" href="#">
+                <img id="footer-pusilkom" alt="pusilkom" src="img/logo-footer-pusilkom-ui-50x56.png">
+            </a>
+            <span class="text-muted">Copyright © 2018 Pusat Ilmu Komputer Universitas Indonesia (Pusilkom UI)</span>
+        </div>
+    </footer>
+
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+</head>
+<body>
+    <div th:replace="fragments/fragment :: navbar"></div>
+    <div th:replace="fragments/fragment :: sidebar"></div>
+
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+        <h1>Eksekutif (Placeholder)</h1>
+    </main >
+
+    <table border="1">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Total</th>
+                <th th:each="proyek,iterationStatus: ${proyekList}" th:text="${proyek.kode}"></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="map,iterationStatus: ${mapping}">
+                <th th:text="${map.karyawan.nama}"></th>
+                <th th:text="${map.total}"></th>
+                <th th:each="rekap,iterationStatus: ${map.rekapList}" th:text="${rekap.persentase}"></th>
+            </tr>
+        </tbody>
+    </table>
+
+    <canvas id="myChart" width="400" height="400"></canvas>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        var ctx = document.getElementById("myChart").getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ["0% - 20%", "21% - 40%", "41% - 60%", "61% - 80%", "81% - 100%"],
+                datasets: [{
+                    label: 'Jumlah karyawan',
+                    data: /*[[${chartValue}]]*/ [],
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 206, 86, 0.2)',
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(153, 102, 255, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(255,99,132,1)',
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 206, 86, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero:true,
+                            max: /*[[${chartSize}]]*/ 50
+                        }
+                    }]
+                }
+            }
+        });
+        /*]]>*/
+    </script>
+
+    <div th:replace="fragments/fragment :: footer"></div>
+
+
+</body>
+</html>
