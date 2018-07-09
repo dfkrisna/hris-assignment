@@ -1,0 +1,234 @@
+#index-body {
+	background-color: #FFCF26;
+}
+
+#logo-pusilkom {
+	height: 35px;
+	width: 74px;
+}
+
+#navbar-utama {
+	box-shadow: 1px 1px 5px #a0a0a0;
+	z-index: 2;
+}
+
+#sidebar {
+	z-index: 1;
+}
+
+#footer-pusilkom {
+	height: 28px;
+	width: 25px;
+}
+
+.roboto {
+	font-family: 'Roboto';
+	font-size: 14px;
+}
+
+.roboto-h3 {
+	font-family: 'Roboto';
+}
+
+.roboto-h4 {
+	font-family: 'Roboto';
+}
+
+.roboto-big {
+	font-family: 'Roboto';
+	font-size: 18px;
+}
+
+.footer {
+	z-index: 2;
+}
+
+.montserrat{
+	font-family: 'Montserrat';
+	font-weight: 500;
+}
+
+.montserrat-regular{
+	font-weight: 200;
+	font-family: 'Montserrat';
+}
+
+.montserrat-small{
+	font-family: 'Montserrat';
+	font-size: 13px;
+	font-weight: 500;
+}
+
+.montserrat-med{
+	font-family: 'Montserrat';
+	font-size: 15px;
+	font-weight: 500;
+}
+
+.montserrat-small-bold{
+	font-family: 'Montserrat';
+	font-size: 13px;
+	font-weight: 700;
+}
+
+.montserrat-med-bold{
+	font-family: 'Montserrat';
+	font-size: 15px;
+	font-weight: 700;
+}
+
+.montserrat-bold-big{
+	font-family: 'Montserrat';
+	font-size: 18px;
+	font-weight: 700;
+}
+
+.montserrat-bold{
+	font-family: 'Montserrat';
+	font-weight: bold;
+	font-weight: 700;
+}
+
+table{
+	border: none !important;
+}
+
+#content-isi {
+	min-height: 100vh;
+}
+
+#pusilkom-sidebar {
+	background-color: #515151 !important;
+}
+
+#pusilkom-footer {
+	background-color: #232323 !important;
+}
+
+.sidebar {
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	padding: 0;
+	box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.sidebar-sticky {
+	position: sticky;
+	top: 48px;
+	height: calc(100vh - 48px);
+	padding-top: .5rem;
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+
+a.effect-underline:after {
+	content: '';
+	position: absolute;
+	left: 0;
+	display: inline-block;
+	height: 1em;
+	width: 100%;
+	border-bottom: 1px solid;
+	margin-top: 10px;
+	opacity: 0;
+	-webkit-transition: opacity 0.35s, -webkit-transform 0.35s;
+	transition: opacity 0.35s, transform 0.35s;
+	-webkit-transform: scale(0,1);
+	transform: scale(0,1);
+}
+
+a.effect-underline:hover:after {
+	opacity: 1;
+	-webkit-transform: scale(1);
+	transform: scale(1);
+}
+
+.icon-sidebar {
+	height: 16px;
+	width: 16px;
+}
+
+#icon-navbar {
+	height: 16px;
+	width: 16px;
+}
+
+.pusil-btn {
+	background-color: #FFCF26;
+	border-color: #F2994A;
+}
+
+.pusil-btn-danger {
+	background-color: #F2994A;
+	border-color: #f26245;
+}
+
+.form-rounded {
+	padding: 0.5em 3em 0.5em 1em;
+	border-radius: 1rem; !important;
+}
+
+.btn-rounded {
+	padding: 0.5em 2em 0.5em 2em;
+	border-radius: 1rem; !important;
+}
+
+.karyawan-rekap-div {
+
+}
+
+.proyek-rekap-div {
+	background-color: #f4f4f4;
+	padding-left: 50px;
+	padding-right: 50px;
+	border-radius: 5px;
+	display: block;
+	text-decoration: none;
+}
+
+
+.proyek-rekap-div:hover {
+	background-color: #FFCF26;
+	text-decoration: none;
+}
+
+.text-value {
+	font-weight: bold;
+	text-decoration: none;
+	color: black;
+	font-family: 'Roboto';
+}
+
+.text-sub {
+	font-weight: 300;
+	color: #353535;
+	text-decoration: none;
+	font-family: 'Roboto';
+}
+
+.form-nama {
+	padding: 3px;
+}
+
+#tabel-header {
+	background-color: #FFCF26;
+}
+
+.tabel-header {
+	background-color: #FFCF26;
+}
+
+.ui-datepicker-calendar {
+	display: none;
+}
+
+.keterangan-row {
+	border-color: #f4f4f4;
+	border-radius: 5px;
+}
+
+.judul {
+	text-shadow: 0px 2px 1px #7c7c7c;
+}

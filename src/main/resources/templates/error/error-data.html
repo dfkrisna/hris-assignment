@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+    <nav th:fragment="navbar" id="navbar-utama" class="navbar bg-light sticky-top">
+        <div class="navbar-header col-md-2">
+            <a class="navbar-brand" ref="#">
+                <img id="logo-pusilkom" alt="pusilkom" src="/img/mainsite.png">
+            </a>
+            <span class="montserrat navbar-brand col-sm-3 col-md-2 mr-0 text-dark"><strong>SISDM</strong> MODUL <strong>PENUGASAN</strong> DAN <strong>PENILAIAN</strong></span>
+        </div>
+        <form th:action="@{/logout}" class="navbar-form navbar-rightcol-md-2" method="post">
+            <input class="btn btn-outline-danger" type="submit" value="logout"/>
+        </form>
+    </nav>
+
+    <div th:fragment="sidebar" id="page-content" class="container-fluid d-block">
+        <div class="row">
+            <nav id="pusilkom-sidebar" class="col-md-2 d-none d-md-block sidebar bg-dark">
+                <div class="sidebar-sticky">
+                </div>
+            </nav>
+        </div>
+    </div>
+
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3 pl-3 pr-3">
+        <div class="d-flex flex-row mb-5">
+            <h2 class="roboto-big">Data tidak tersedia</h2>
+        </div>
+    </main >
+
+    <div th:replace="fragments/fragment :: footer"></div>
+
+</body>
+</html>

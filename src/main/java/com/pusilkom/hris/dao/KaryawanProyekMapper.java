@@ -1,50 +1,113 @@
 package com.pusilkom.hris.dao;
 
 import com.pusilkom.hris.model.KaryawanProyekModel;
-import com.pusilkom.hris.model.ProyekModel;
 import org.apache.ibatis.annotations.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Mapper
 public interface KaryawanProyekMapper {
 
-    @Select("SELECT DISTINCT KP.id, id_karyawan, id_proyek, id_start_period, id_end_period, timestamp_inisiasi, id_role\n" +
-            "FROM mpp.\"KARYAWAN_PROYEK\" AS KP, mpp.\"PERIODE\" AS P1, mpp.\"PERIODE\" AS P2, mpp.\"PERIODE\" AS P3\n" +
+    @Select("SELECT DISTINCT KP.id, id_karyawan, id_proyek, start_periode, end_periode, timestamp_inisiasi, id_role\n" +
+            "FROM mpp.\"KARYAWAN_PROYEK\" AS KP\n" +
             "WHERE KP.id_proyek = #{idProyek}\n" +
-            "\tAND P1.id = id_start_period\n" +
-            "    AND (id_end_period IS NULL OR P2.id = id_end_period)\n" +
-            "    AND P3.id = #{idPeriode}\n" +
-            "    AND DATE(concat_ws('-', P1.bulan, 01, P1.tahun)) <= DATE(concat_ws('-', P3.bulan, 01, P3.tahun))\n" +
-            "    AND DATE(concat_ws('-', P2.bulan, 01, P2.tahun)) >= DATE(concat_ws('-', P3.bulan, 01, P3.tahun))\n" +
-            "ORDER BY id_start_period ASC;")
+            "\tAND start_periode <= '${periode}'\n" +
+            "\tAND (end_periode >= '${periode}' OR end_periode IS NULL)\n" +
+            "ORDER BY start_periode ASC;")
     @Results(value = {
             @Result(property="id", column="id"),
             @Result(property="idKaryawan", column="id_karyawan"),
             @Result(property="idProyek", column="id_proyek"),
-            @Result(property="idStartPeriod", column="id_start_period"),
-            @Result(property="idEndPeriod", column="id_end_period"),
+            @Result(property="startPeriode", column="start_periode"),
+            @Result(property="endPeriode", column="end_periode"),
             @Result(property="timestampInisiasi", column="timestamp_inisiasi"),
             @Result(property="idRole", column="id_role")
     })
-    List<KaryawanProyekModel> selectKaryawanProyekByProyekPeriode(@Param("idProyek") int idProyek, @Param("idPeriode") int idPeriode);
+    List<KaryawanProyekModel> selectKaryawanProyekByProyekPeriode(@Param("idProyek") int idProyek, @Param("periode") LocalDate periode);
 
-    @Select("SELECT DISTINCT KP.id, id_karyawan, id_proyek, id_start_period, id_end_period, timestamp_inisiasi, id_role\n" +
-            "FROM mpp.\"KARYAWAN_PROYEK\" AS KP, mpp.\"PERIODE\" AS P1, mpp.\"PERIODE\" AS P2, mpp.\"PERIODE\" AS P3\n" +
-            "WHERE P1.id = id_start_period\n" +
-            "    AND (id_end_period IS NULL OR P2.id = id_end_period)\n" +
-            "    AND P3.id = #{idPeriode}\n" +
-            "    AND DATE(concat_ws('-', P1.bulan, 01, P1.tahun)) <= DATE(concat_ws('-', P3.bulan, 01, P3.tahun))\n" +
-            "    AND DATE(concat_ws('-', P2.bulan, 01, P2.tahun)) >= DATE(concat_ws('-', P3.bulan, 01, P3.tahun))\n" +
-            "ORDER BY id_start_period ASC;")
+    @Select("SELECT DISTINCT KP.id, id_karyawan, id_proyek, start_periode, end_periode, timestamp_inisiasi, id_role\n" +
+            "FROM mpp.\"KARYAWAN_PROYEK\" AS KP\n" +
+            "WHERE start_periode <= '${periode}'\n" +
+            "\tAND (end_periode >= '${periode}' OR end_periode IS NULL)\n" +
+            "ORDER BY start_periode ASC;")
     @Results(value = {
             @Result(property="id", column="id"),
             @Result(property="idKaryawan", column="id_karyawan"),
             @Result(property="idProyek", column="id_proyek"),
-            @Result(property="idStartPeriod", column="id_start_period"),
-            @Result(property="idEndPeriod", column="id_end_period"),
+            @Result(property="startPeriode", column="start_periode"),
+            @Result(property="endPeriode", column="end_periode"),
             @Result(property="timestampInisiasi", column="timestamp_inisiasi"),
             @Result(property="idRole", column="id_role")
     })
-    List<KaryawanProyekModel> selectKaryawanProyekByPeriode(@Param("idPeriode") int idPeriode);
+    List<KaryawanProyekModel> selectKaryawanProyekByPeriode(@Param("periode") LocalDate periode);
+
+    @Select("SELECT id, id_karyawan, id_proyek, start_periode, end_periode, timestamp_inisiasi, id_role\n" +
+            "FROM mpp.\"KARYAWAN_PROYEK\"\n" +
+            "WHERE id_karyawan = ${idKaryawan}" +
+            "ORDER BY start_periode ASC;")
+    @Results(value = {
+            @Result(property="id", column="id"),
+            @Result(property="idKaryawan", column="id_karyawan"),
+            @Result(property="idProyek", column="id_proyek"),
+            @Result(property="startPeriode", column="start_periode"),
+            @Result(property="endPeriode", column="end_periode"),
+            @Result(property="timestampInisiasi", column="timestamp_inisiasi"),
+            @Result(property="idRole", column="id_role")
+    })
+    List<KaryawanProyekModel> selectKaryawanProyekByKaryawan(@Param("idKaryawan") int idKaryawan);
+
+    @Select("SELECT id, id_karyawan, id_proyek, start_periode, end_periode, timestamp_inisiasi, id_role\n" +
+            "FROM mpp.\"KARYAWAN_PROYEK\"\n" +
+            "WHERE id_karyawan = ${idKaryawan}" +
+            "AND id_proyek = ${idProyek}")
+    @Results(value = {
+            @Result(property="id", column="id"),
+            @Result(property="idKaryawan", column="id_karyawan"),
+            @Result(property="idProyek", column="id_proyek"),
+            @Result(property="startPeriode", column="start_periode"),
+            @Result(property="endPeriode", column="end_periode"),
+            @Result(property="timestampInisiasi", column="timestamp_inisiasi"),
+            @Result(property="idRole", column="id_role")
+    })
+    KaryawanProyekModel selectKaryawanProyekByKaryawanandProyek(@Param("idKaryawan") int idKaryawan, @Param("idProyek") int idProyek);
+
+    @Insert("INSERT INTO mpp.\"KARYAWAN_PROYEK\"(\n" +
+            "\tid_karyawan, id_proyek, timestamp_inisiasi, id_role, start_periode, end_periode)\n" +
+            "\tVALUES (#{idKaryawan}, #{idProyek}, to_timestamp(#{timestampInisiasi}, 'DD/MM/YYYY HH24:MI'), #{idRole}, #{startPeriode}, #{endPeriode});")
+    void insertKaryawanProyek(KaryawanProyekModel karyawanProyekModel);
+
+    @Select("SELECT id, id_karyawan, id_proyek, start_periode, end_periode, timestamp_inisiasi, id_role\n" +
+            "FROM mpp.\"KARYAWAN_PROYEK\"\n" +
+            "WHERE id = ${idKaryawanProyek};")
+    @Results(value = {
+            @Result(property="id", column="id"),
+            @Result(property="idKaryawan", column="id_karyawan"),
+            @Result(property="idProyek", column="id_proyek"),
+            @Result(property="startPeriode", column="start_periode"),
+            @Result(property="endPeriode", column="end_periode"),
+            @Result(property="timestampInisiasi", column="timestamp_inisiasi"),
+            @Result(property="idRole", column="id_role")
+    })
+    KaryawanProyekModel selectKaryawanProyekById(@Param("idKaryawanProyek") Integer idKaryawanProyek);
+
+    @Update("UPDATE mpp.\"KARYAWAN_PROYEK\"\n" +
+            "\tSET end_periode=#{endPeriode}\n" +
+            "\tWHERE id=#{id};")
+    void updateKaryawanProyek(KaryawanProyekModel karyawanProyek);
+
+    @Select("SELECT id, id_karyawan, id_proyek, start_periode, end_periode, timestamp_inisiasi, id_role\n" +
+            "FROM mpp.\"KARYAWAN_PROYEK\"\n" +
+            "WHERE id_proyek = ${idProyek}" +
+            "ORDER BY start_periode ASC;")
+    @Results(value = {
+            @Result(property="id", column="id"),
+            @Result(property="idKaryawan", column="id_karyawan"),
+            @Result(property="idProyek", column="id_proyek"),
+            @Result(property="startPeriode", column="start_periode"),
+            @Result(property="endPeriode", column="end_periode"),
+            @Result(property="timestampInisiasi", column="timestamp_inisiasi"),
+            @Result(property="idRole", column="id_role")
+    })
+    List<KaryawanProyekModel> selectKaryawanProyekByProyek(@Param("idProyek") Integer idProyek);
 }

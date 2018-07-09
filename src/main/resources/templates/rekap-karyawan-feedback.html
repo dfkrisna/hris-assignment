@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+    <div th:replace="fragments/fragment :: navbar"></div>
+    <div th:replace="fragments/fragment :: sidebar"></div>
+
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+        <div class="d-flex flex-row mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="roboto breadcrumb-item active" aria-current="page">
+                        <a th:href="'/eksekutif'">Beranda</a>
+                    </li>
+                    <li class="roboto breadcrumb-item active" aria-current="page">Rekap Karyawan</li>
+                </ol>
+            </nav>
+            <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+        </div>
+
+        <h2 class="montserrat-bold-big">Rekap Karyawan</h2><hr/>
+
+        <div th:if="${karyawan != null}">
+            <div>
+                <div class="row karyawan-rekap-div" style="margin-top:0;">
+                    <div class="col-sm-3">
+                        <h3 th:text="${karyawan.nama}">Nama Karyawan</h3>
+                    </div>
+                    <div class="col-sm-3 text-right">
+                        <div class="row">
+                            <div class="col text-center"><h5 class="text-sub">Beban kerja saat ini</h5></div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center"><h3 th:text="${persentaseKontribusi + '%'}">Beban kerja saat ini</h3></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 text-right">
+                        <div class="row">
+                            <div class="col text-center"><h5 class="text-sub">Jumlah proyek total</h5></div>
+                        </div>
+                        <div class="row">
+                            <div class="col text-center"><h3 th:text="${#lists.size(penugasanList)}">Proyek</h3></div>
+                        </div>
+                    </div>
+                    <div class="col-sm-3 text-right">
+                        <div class="row text-right"><div class="col text-center"><h5 class="text-sub">Nilai karyawan</h5></div></div>
+                        <div class="row text-right"><div class="col text-center"><h3 th:text="${ratingKaryawan}">Rating</h3></div></div>
+                    </div>
+                </div>
+
+                <br/><br/><br/>
+
+                <h3 class="montserrat-med-bold">Nilai 6 Periode Terakhir</h3><hr/>
+                <div class="row">
+                    <div class="col-sm-1"></div>
+                    <div class="col-sm-10">
+                        <canvas id="myChart" width="350" height="150"></canvas>
+                    </div>
+                    <div class="col-sm-1"></div>
+                </div>
+            </div>
+            <br/><br/><br/>
+            <ul class="nav nav-tabs">
+                <li class="nav-item">
+                    <a class="nav-link" th:href="${'/rekap/karyawan/riwayat/' + karyawan.id}"><h4 class="montserrat-med-bold">Riwayat Proyek</h4></a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active"><h4 class="montserrat-med-bold">Rekap Feedback</h4></a>
+                </li>
+            </ul>
+
+            <br/>
+
+            <div class="row">
+                <div class="col text-left">
+                    <div th:if="${previous != null}">
+                        <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" th:href="@{'/rekap/karyawan/feedback/' + ${karyawan.id}(periode=${previous.month + ' ' + previous.year})}" style="height:40px; width:160px;"><p th:text="${previous.month + ' ' + previous.year}"></p></a>
+                    </div>
+                </div>
+                <div class="col text-center">
+                    <div th:if="${current != null}">
+                        <h3 th:text="${current.month + ' ' + current.year}">Current Periode</h3>
+                        <form action="#" th:action="@{'/rekap/karyawan/feedback/' + ${karyawan.id}}" method="get">
+                            <input name="periode" id="periode" class="date-picker form-rounded form-control" readonly="readonly" />
+                            <input class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" type="submit" value="Pilih Periode" />
+                        </form>
+                    </div>
+                </div>
+                <div class="col text-right">
+                    <div th:if="${next != null}">
+                        <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" th:href="@{'/rekap/karyawan/feedback/' + ${karyawan.id}(periode=${next.month + ' ' + next.year})}" style="height:40px; width:160px;"><p th:text="${next.month + ' ' + next.year}"></p></a>
+                    </div>
+                </div>
+            </div>
+
+            <br/><br/>
+
+            <div th:if="${#lists.isEmpty(feedbackList)}">
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-8 text-center">
+                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">Tidak ada </h2>
+                        <h2 class="d-inline text-value text-center text-muted montserrat-med">feedback untuk karyawan</h2>
+                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2"> pada periode ini</h2>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+
+                <br/><br/><br/>
+
+            </div>
+
+            <table id="rekap-feedback" class="table-mpp table table-hover" th:unless="${#lists.isEmpty(feedbackList)}">
+                <thead class="tabel-header">
+                <tr>
+                    <th class="text-center">Nama Penilai</th>
+                    <th class="text-center">Proyek</th>
+                    <th class="text-center">Role</th>
+                    <th class="text-center">Feedback</th>
+                    <th class="text-center">Nilai</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="feedback,iterationStatus: ${feedbackList}">
+                    <th><a th:text="${feedback.namaPenilai}" th:href="${'/rekap/karyawan/riwayat/' + feedback.idPenilai}">Nama Penilai</a></th>
+                    <td class="text-center" th:text="${feedback.kodeProyek}">Kode Proyek</td>
+                    <td class="text-center" th:text="${feedback.rolePenilai}">Role Penilai</td>
+                    <td class="text-center" th:text="${feedback.feedback}">Feedback</td>
+                    <td th:if="${feedback.rating==0}" class="montserrat-small text-center text-value">
+                        <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
+                        <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
+                    </td>
+                    <td th:if="${feedback.rating>0 && feedback.rating<=60}" class="montserrat-small text-center text-value">
+                        <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
+                        <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
+                    </td>
+                    <td th:if="${feedback.rating>60 && feedback.rating<=80}" class="montserrat-small text-center text-value">
+                        <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
+                        <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
+                    </td>
+                    <td th:if="${feedback.rating>80 && feedback.rating<=100}" class="montserrat-small text-center text-value">
+                        <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
+                        <p class="d-inline montserrat-small text-muted" th:text="${feedback.rating}"></p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <link rel="stylesheet" type="text/css" media="screen" th:href="'http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css'">
+            <script type="text/javascript">
+                $(function() {
+                    $('.date-picker').datepicker( {
+                        changeMonth: true,
+                        changeYear: true,
+                        showButtonPanel: true,
+                        dateFormat: 'MM yy',
+                        onClose: function(dateText, inst) {
+                            $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+                        }
+                    });
+                });
+            </script>
+            <style>
+                .ui-datepicker-calendar {
+                    display: none;
+                }
+            </style>
+            <script th:inline="javascript">
+                /*<![CDATA[*/
+
+                var ctx = document.getElementById("myChart").getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: /*[[${chartLabel}]]*/ [],
+                        datasets: [{
+                            data: /*[[${chartValueCum}]]*/ [],
+                            label: "Nilai Kumulatif",
+                            borderColor: "#FFCF26",
+                            fill: false
+                        },
+                            {
+                                data: /*[[${chartValueAvg}]]*/ [],
+                                label: "Nilai Per Periode",
+                                borderColor: "blue",
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {}
+                });
+                /*]]>*/
+            </script>
+        </div>
+
+        <div th:unless="${karyawan != null}" class="row">
+            <br/><br/>
+            <div class="col-2"></div>
+            <div class="col-8 text-center">
+                <h3 class="d-inline text-sub text-center mr-2 montserrat">Karyawan</h3>
+                <h3 class="d-inline text-value text-center montserrat">tidak terdaftar</h3>
+                <h3 class="d-inline text-sub text-center ml-2 montserrat">pada sistem</h3>
+            </div>
+            <div class="col-2"></div>
+            <br/><br/><br/>
+        </div>
+    </main >
+
+
+
+    <div th:replace="fragments/fragment :: footer"></div>
+
+</body>
+</html>

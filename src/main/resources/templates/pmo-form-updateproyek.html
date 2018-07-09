@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+
+</head>
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.1/jquery.js"></script>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/jquery-ui.min.js"></script>
+<link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
+
+
+<body>
+<div th:replace="fragments/fragment :: navbar"></div>
+<div th:replace="fragments/fragment :: sidebar"></div>
+
+<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+
+    <div class="d-flex flex-row mb-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="roboto breadcrumb-item active" aria-current="page">
+                    <a th:href="'/pmo'">Beranda</a>
+                </li>
+                <li class="roboto breadcrumb-item active" aria-current="page">Ubah Data Proyek</li>
+            </ol>
+        </nav>
+        <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+    </div>
+
+
+    <div class="d-flex flex-row mb-8" >
+        <form method="post" th:action="'/proyek/ubah/' + ${proyek.id}" th:object="${proyek}" class="form-horizontal" style="width: 70%">
+            <div class="form-row mb-3">
+                <div class="form-group col mr-2">
+                    <label class="roboto">Nama Proyek</label>
+                    <input type="text" class="form-control form-rounded" name="namaProyek" th:field="*{namaProyek}" required/>
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col mr-2">
+                    <label class="roboto">Kode Proyek</label>
+                    <input type="text" class="form-control form-rounded" name="kode" th:field="*{kode}" required />
+                </div>
+                <div class="form-group col">
+                    <label class="roboto">Klien Proyek</label>
+                    <select class="form-control form-rounded" th:field="*{idKlien}">
+                        <option th:if="${klien == null}" value="">Pilih Klien Proyek</option>
+                        <option th:unless="${klien == null}" th:value="${klien.getId()}" th:text="${klien.getNama()}"></option>
+                        <option th:each="klient : ${listklien}" th:value="${klient.getId()}" th:text="${klient.getNama()}"></option>
+                    </select>
+                </div>
+
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col mr-2">
+                    <label class="roboto">Keterangan</label>
+                    <textarea class="form-control form-rounded" name="keterangan" th:field="*{keterangan}" rows="5"></textarea>
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col mr-2">
+                    <label class="roboto">Periode Mulai</label>
+                    <input name="startdate" id="date-picker" th:value="${startdate}" class="form-control form-rounded" style="background-color:#fff" required readonly />
+                </div>
+                <!--<div class="form-group col">-->
+                    <!--<label class="roboto">Periode Selesai</label>-->
+                    <!--<input name="enddate" id="date-picker2" th:value="${enddate}" class="form-control form-rounded" style="background-color:#fff" readonly/>-->
+                <!--</div>-->
+            </div>
+
+            <div class="form-row mb-3">
+                <!--<div class="form-group col mr-2">-->
+                    <!--<label class="roboto">Parent Project</label>-->
+                    <!--<select class="form-control form-rounded" th:field="*{idParent}">-->
+                        <!--<option th:if="${parentID == null}" value="">Pilih Parent Project</option>-->
+                        <!--<option th:unless="${parentID == null}" th:value="${parentID}" th:text="${parentName}"></option>-->
+                        <!--<option th:each="proy : ${parentproy}" th:value="${proy.id}" th:text="${proy.namaProyek}"></option>-->
+                    <!--</select>-->
+                <!--</div>-->
+                <div class="form-group col">
+                    <!--<label class="roboto">Status</label>-->
+                    <!--<br>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy==null}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio5" value="Tidak Aktif" >-->
+                        <!--<label class="form-check-label" for="inlineRadio5">Tidak Aktif</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy==null}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio6" value="Aktif" >-->
+                        <!--<label class="form-check-label" for="inlineRadio6">Aktif</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy!= null && statproy.equalsIgnoreCase('Tidak Aktif')}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio5" value="Tidak Aktif" checked>-->
+                        <!--<label class="form-check-label" for="inlineRadio5">Tidak Aktif</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy!= null && statproy.equalsIgnoreCase('Tidak Aktif')}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio6" value="Aktif" >-->
+                        <!--<label class="form-check-label" for="inlineRadio6">Aktif</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy!= null && statproy.equalsIgnoreCase('Aktif')}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio5" value="Tidak Aktif" >-->
+                        <!--<label class="form-check-label" for="inlineRadio5">Tidak Aktif</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy!= null && statproy.equalsIgnoreCase('Aktif')}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio6" value="Aktif" checked>-->
+                        <!--<label class="form-check-label" for="inlineRadio6">Aktif</label>-->
+                    <!--</div>-->
+
+                    <!--<div class="form-check form-check-inline" th:if="${statproy==null}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio5" value="Aktif" >-->
+                        <!--<label class="form-check-label" for="inlineRadio5">Aktif</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy==null}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio6" value="Berjalan" >-->
+                        <!--<label class="form-check-label" for="inlineRadio6">Berjalan</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy!= null && statproy.equalsIgnoreCase('Berjalan')}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio1" value="Berjalan" checked>-->
+                        <!--<label class="form-check-label" for="inlineRadio1">Berjalan</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy!= null && statproy.equalsIgnoreCase('Berjalan')}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio2" value="Selesai" >-->
+                        <!--<label class="form-check-label" for="inlineRadio2">Selesai</label>-->
+                    <!--</div>-->
+
+                    <!--<div class="form-check form-check-inline" th:if="${statproy!= null && statproy.equalsIgnoreCase('Aktif')}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio3" value="Aktif" checked>-->
+                        <!--<label class="form-check-label" for="inlineRadio3">Aktif</label>-->
+                    <!--</div>-->
+                    <!--<div class="form-check form-check-inline" th:if="${statproy!= null && statproy.equalsIgnoreCase('Aktif')}">-->
+                        <!--<input class="form-check-input" type="radio" name="statproy" id="inlineRadio4" value="Selesai" >-->
+                        <!--<label class="form-check-label" for="inlineRadio4">Selesai</label>-->
+                    <!--</div>-->
+
+                    <!--<div class="form-row">-->
+                        <!--<div class="col-sm-12" th:if="${statproy!= null && statproy.equalsIgnoreCase('Tidak Aktif')}">-->
+                            <!--<input class="form-control form-rounded" type="text" name="statproy" th:value="${statproy}" disabled><br>-->
+                        <!--</div>-->
+                        <!--<div class="col-sm-12" th:if="${statproy!= null && statproy.equalsIgnoreCase('Selesai')}">-->
+                            <!--<input  class="form-control form-rounded" type="text" name="statproy" th:value="${statproy}" disabled><br>-->
+                        <!--</div>-->
+                        <!--<div class="col-sm-12"></div>-->
+                    <!--</div>-->
+
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+                <div class="form-group col mt-2 ">
+                    <label></label>
+                    <div class="row">
+                        <div class="col-sm-3"><button type=button class="pusil-btn btn btn-primary col" data-toggle="modal" data-target="#updproyek-confirm">Simpan</button></div>
+                        <div class="col-sm-9"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="updproyek-confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title montserrat-med" id="exampleModalLabel1">Ubah Data Proyek</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="montserrat-small">Apakah anda yakin akan mengubah data proyek ini?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="montserrat-small pusil-btn-danger btn text-white btn-rounded btn-danger" data-dismiss="modal">Batalkan</button>
+                            <button type="submit" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" name="action" value="save">Simpan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+
+
+</main >
+
+
+<div th:replace="fragments/fragment :: footer"></div>
+
+
+
+</body>
+
+<script type="text/javascript">
+    $(function() {
+        $("#date-picker").datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'MM yy',
+            onClose: function(dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+            }
+        });
+        $("#date-picker2").datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'MM yy',
+            onClose: function(dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+            }
+        });
+    });
+</script>
+<style>
+    .ui-datepicker-calendar {
+        display: none;
+    }
+</style>
+</html>

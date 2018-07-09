@@ -12,4 +12,6 @@ public class KaryawanModel {
     private int idPengguna;
     private int idDivisi;
     private String nama;
+
+    private int ratingKaryawan;
 }

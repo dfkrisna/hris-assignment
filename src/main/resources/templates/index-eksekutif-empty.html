@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+    <div th:replace="fragments/fragment :: navbar"></div>
+    <div th:replace="fragments/fragment :: sidebar"></div>
+
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+        <div class="d-flex flex-row mb-5">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="roboto breadcrumb-item active" aria-current="page">
+                        <a th:href="'/eksekutif'">Beranda</a>
+                    </li>
+                </ol>
+            </nav>
+            <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+        </div>
+
+        <h2 class="montserrat-bold-big">Rekap Penugasan</h2><hr/>
+
+        <div class="row">
+            <div class="col text-left">
+                <div th:if="${previous != null}">
+                    <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" th:href="@{'/eksekutif'(periode=${previous.month + ' ' + previous.year})}" style="height:40px; width:160px;"><p th:text="${previous.month + ' ' + previous.year}"></p></a>
+                </div>
+            </div>
+            <div class="col text-center">
+                <div th:if="${current != null}">
+                    <h3 th:text="${current.month + ' ' + current.year}" class="montserrat-med-bold">Current Periode</h3>
+                    <form action="#" th:action="@{/eksekutif}" method="get">
+                        <input name="periode" id="periode" class="date-picker form-rounded form-control" readonly="readonly" />
+                        <input class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" type="submit" value="Pilih Periode" />
+                    </form>
+                </div>
+            </div>
+            <div class="col text-right">
+                <div th:if="${next != null}">
+                    <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" th:href="@{'/eksekutif'(periode=${next.month + ' ' + next.year})}" style="height:40px; width:160px;"><p th:text="${next.month + ' ' + next.year}"></p></a>
+                </div>
+            </div>
+        </div>
+
+        <br/><br/><br/><br/><br/>
+
+        <div class="row">
+            <div class="col-2"></div>
+            <div class="col-8 text-center">
+            <h1 class="d-inline text-sub text-center mr-2">Tidak ada</h1>
+            <h1 class="d-inline text-value text-center">proyek aktif</h1>
+            <h1 class="d-inline text-sub text-center ml-2">pada periode ini</h1>
+            </div>
+            <div class="col-2"></div>
+        </div>
+    </main >
+
+    <div th:replace="fragments/fragment :: footer"></div>
+
+    <script type="text/javascript">
+        $(function() {
+            $('.date-picker').datepicker( {
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'MM yy',
+                onClose: function(dateText, inst) {
+                    $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+                }
+            });
+        });
+    </script>
+    <style>
+        .ui-datepicker-calendar {
+            display: none;
+        }
+    </style>
+</body>
+</html>

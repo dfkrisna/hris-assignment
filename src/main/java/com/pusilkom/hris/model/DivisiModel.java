@@ -9,4 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class DivisiModel {
     private int id;
+    private String kode;
+    private String namaDivisi;
+    private int idManajer;
+    private int idDivisiInduk;
 }

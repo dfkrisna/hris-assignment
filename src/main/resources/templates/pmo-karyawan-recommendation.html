@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+<div th:replace="fragments/fragment :: navbar"></div>
+<div th:replace="fragments/fragment :: sidebar"></div>
+
+<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+    <h2 th:text="${proyek.kode} + ' (' + ${proyek.namaProyek} + ')' " class="montserrat-bold-big">Matriks Penugasan</h2>
+
+    <br/><hr/><br/>
+
+    <div class="row">
+        <div class="col text-center">
+            <div th:if="${current != null}">
+                <h3 class="montserrat-med" th:text="'Periode Penugasan : ' + ${current.month + ' ' + current.year}">Current Periode</h3>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <form method="post" th:action="'/pmo/proyek/tambah/assign/' +${proyek.id}">
+        <div class="form-row mb-3">
+            <div class="form-group col mt-2 ">
+                <label></label>
+                <div class="row">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-3">
+                        <a th:href="'/proyek/detail/' + ${proyek.id}" class="monsterrat-small pusil-btn-danger btn btn-danger btn-rounded">Lewati</a>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" name="action" value="assign">Tugaskan</button>
+                    </div>
+                    <!--<div class="col-sm-3"><button type="submit" class="pusil-btn btn btn-primary col" name="action" value="save">Simpan Penugasan</button></div>-->
+                    <!---->
+                    <!--<div class="col-sm-3"></div>-->
+                </div>
+            </div>
+        </div>
+
+
+        <!--<div class="form-row mb-3">-->
+            <!--<div class="form-group col mt-2">-->
+                <!--<div class="row">-->
+                    <!--<div class="col-sm-6"></div>-->
+                    <!--<div class="col-sm-3">-->
+                        <!--<button type="submit" class="pusil-btn btn btn-primary col" name="action" value="assign">Tugaskan</button>-->
+                    <!--</div>-->
+                    <!--<div class="col-sm-3">-->
+                        <!--<a th:href="'/proyek/detail/' + ${proyek.id}" class="pusil-btn btn btn-warning col">Lewati</a>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+        <table id="table-rekomendasi" class="table table-hover">
+            <thead class="tabel-header">
+            <tr>
+                <th></th>
+                <th class="montserrat-small-bold text-center">Total</th>
+                <th class="montserrat-small-bold text-center">Rating</th>
+                <th class="montserrat-small-bold text-center">Assign</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="map,iterationStatus: ${mapping}">
+                <!--<div th:each="rekap,iterationStatus: ${map.rekapList}"> &lt;!&ndash;th:if="${rekap.idProyek == proyek.id}"&ndash;&gt;-->
+                    <!--<div></div>-->
+                        <th class="montserrat-small" th:text="${map.karyawan.nama}"></th>
+                        <td class="montserrat-small text-center" th:text="${map.total + '%'}" th:style="|color: rgb(${map.red}, ${map.green}, 0);|"></td>
+                        <td class="montserrat-small text-center" th:text="${map.karyawan.ratingKaryawan}"></td>
+                        <td class="montserrat-small text-center">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="selectedKaryawan" th:value="${map.karyawan.id}"></label>
+                            </div>
+                        </td>
+            </tr>
+            </tbody>
+        </table>
+    </form>
+
+</main >
+
+<div th:replace="fragments/fragment :: footer"></div>
+
+<!--<script-->
+<!--src="https://code.jquery.com/jquery-3.3.1.js"-->
+<!--integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="-->
+<!--crossorigin="anonymous"></script>-->
+<!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">-->
+<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>-->
+<!--<script>-->
+<!--$(document).ready( function () {-->
+<!--$('#rekap-eksekutif').DataTable();-->
+<!--} );-->
+<!--</script>-->
+</body>
+</html>

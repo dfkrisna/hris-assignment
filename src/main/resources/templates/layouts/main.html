@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8" />
+    <title>KPU - Sistem Informasi Partisipasi Masyarakat (SIPARMAS)</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link href="../../static/css/bootstrap.min.css" th:href="@{/css/bootstrap.min.css}" rel="stylesheet" />
+    <link href="../../static/font-awesome/css/font-awesome.css" th:href="@{/font-awesome/css/font-awesome.css}" rel="stylesheet" />
+
+    <link href="../../static/css/animate.css" th:href="@{/css/animate.css}" rel="stylesheet" />
+    <link href="../../static/css/style.css" th:href="@{/css/style.css}" rel="stylesheet" />
+</head>
+<body>
+<script>
+    var bodyClassList = document.getElementsByTagName('body')[0].classList;
+
+    if (('localStorage' in window) && window['localStorage'] !== null) {
+        if (localStorage.getItem('collapse_menu') == 'on')
+            bodyClassList.add('mini-navbar');
+        else
+            bodyClassList.remove('mini-navbar');
+    }
+</script>
+<div id="wrapper">
+    <!-- Navigation -->
+    <div th:replace="fragments/sidebar :: sidebar"></div>
+
+    <div id="page-wrapper" class="gray-bg">
+        <div th:replace="fragments/topbar :: topbar"></div>
+        <div class="row wrapper border-bottom white-bg page-heading">
+            <div class="col-sm-12">
+                <h2 th:text="${pageTitle}"></h2>
+                <ol class="breadcrumb hidden-sm hidden-xs">
+                    <li th:each="item: ${breadcrumb}"><a th:href="${item.url}" th:text="${item.label}"></a></li>
+                    <!--<li>-->
+                        <!--<a href="">This is</a>-->
+                    <!--</li>-->
+                    <!--<li class="active">-->
+                        <!--<strong>Breadcrumb</strong>-->
+                    <!--</li>-->
+                </ol>
+            </div>
+        </div>
+        <div th:fragment="alert">
+            <div th:if="${SUCCESS}">
+                <div class="alert alert-success" role="alert" th:text="${SUCCESS}"/>
+            </div>
+            <div th:if="${ERROR}">
+                <div class="alert alert-danger" role="alert" th:text="${ERROR}"/>
+            </div>
+        </div>
+        <div class="wrapper wrapper-content" layout:fragment="content">
+            Content goes here
+        </div>
+        <div class="footer">
+            <div>
+                <strong>Copyright</strong> &copy; 2017 - KPU Republik Indonesia
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Mainly scripts -->
+<script src="../../static/js/jquery-2.1.1.js" th:src="@{/js/jquery-2.1.1.js}"></script>
+<script src="../../static/js/bootstrap.min.js" th:src="@{/js/bootstrap.min.js}"></script>
+<script src="../../static/js/plugins/metisMenu/jquery.metisMenu.js" th:src="@{/js/plugins/metisMenu/jquery.metisMenu.js}"></script>
+<script src="../../static/js/plugins/slimscroll/jquery.slimscroll.min.js" th:src="@{/js/plugins/slimscroll/jquery.slimscroll.min.js}"></script>
+<script src="../../static/js/inspinia.js" th:src="@{/js/inspinia.js}"></script>
+<script src="../../static/js/plugins/pace/pace.min.js" th:src="@{/js/plugins/pace/pace.min.js}"></script>
+<th:block layout:fragment="customscript">
+    <!-- Custom JS -->
+
+</th:block>
+</body>
+</html>

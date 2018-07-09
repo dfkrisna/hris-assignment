@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+<div th:replace="fragments/fragment :: navbar"></div>
+<div th:replace="fragments/fragment :: sidebar"></div>
+
+<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3 pl-3 pr-3">
+    <div class="d-flex flex-row mb-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="roboto breadcrumb-item active" aria-current="page">
+                    <a th:href="'/mngdivisi'">Beranda</a>
+                </li>
+            </ol>
+        </nav>
+        <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+    </div>
+    <div th:if="${notification != null}" class="d-flex flex-row mb-2">
+        <h3 th:text="${notification}" class="montserrat-small alert alert-success"></h3>
+    </div>
+
+    <div class="d-flex flex-row mb-5">
+        <h2 class="montserrat-bold-big">Rekapitulasi Anggota Divisi</h2>
+    </div>
+    <div class="d-flex flex-row mb-5">
+        <h3 class="montserrat-med" th:text="'Nama Divisi : ' + ${divisi.getNamaDivisi()}"></h3>
+    </div>
+
+    <div class="d-flex flex-row mb-2">
+        <table id="tabel-anggota-divisi" class="table table-hover">
+            <thead class="tabel-header">
+            <tr>
+                <th class="montserrat-small-bold" scope="col">Nama Anggota</th>
+                <th class="montserrat-small-bold" scope="col">Nilai Keseluruhan (0-100)</th>
+            </tr>
+            </thead>
+            <div th:each="karyawan, iterationStatus: ${listKaryawan}">
+                <tr>
+                    <td><a class="montserrat-small" th:text="${karyawan.nama}" th:href="'/mngdivisi/rekap/' + ${karyawan.id}"></a></td>
+                    <td>
+                        <div th:if="${mapping.get(karyawan.id) >= 0 && mapping.get(karyawan.id) <= 60}">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${mapping.get(karyawan.id)}"></p>
+                        </div>
+                        <div th:if="${mapping.get(karyawan.id) > 60 && mapping.get(karyawan.id) <= 80}">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${mapping.get(karyawan.id)}"></p>
+                        </div>
+                        <div th:if="${mapping.get(karyawan.id) > 80 && mapping.get(karyawan.id) <= 100}">
+                            <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
+                            <p class="d-inline montserrat-small text-muted" th:text="${mapping.get(karyawan.id)}"></p>
+                        </div>
+                    </td>
+                </tr>
+            </div>
+        </table>
+    </div>
+
+    <div class="d-flex flex-row mb-1">
+        <div class="col text-center">
+            <h3 class="montserrat-small text-muted">
+                Keterangan Rentang Nilai:
+            </h3>
+        </div>
+    </div>
+    <div class="d-flex flex-row mb-1">
+        <div class="col text-center">
+            <h3 class="montserrat-small text-muted">
+                <img class="d-inline icon-sidebar mr-1" src="/img/gold-star.png">: 81-100
+            </h3>
+        </div>
+    </div>
+    <div class="d-flex flex-row mb-1">
+        <div class="col text-center">
+            <h3 class="montserrat-small text-muted">
+                <img class="d-inline icon-sidebar mr-1" src="/img/silver-star.png">: 61-80
+            </h3>
+        </div>
+    </div>
+    <div class="d-flex flex-row mb-1">
+        <div class="col text-center">
+            <h3 class="montserrat-small text-muted">
+                <img class="d-inline icon-sidebar mr-1" src="/img/bronze-star.png">: 1-60
+            </h3>
+        </div>
+    </div>
+    <div class="d-flex flex-row mb-2">
+        <div class="col text-center">
+            <h3 class="montserrat-small text-muted">
+                <img class="d-inline icon-sidebar mr-1" src="/img/black-star.png">: Belum Dinilai
+            </h3>
+        </div>
+    </div>
+
+</main >
+
+<div th:replace="fragments/fragment :: footer"></div>
+
+
+</body>
+</html>

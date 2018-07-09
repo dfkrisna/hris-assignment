@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+    <div th:replace="fragments/fragment :: navbar"></div>
+    <div th:replace="fragments/fragment :: sidebar"></div>
+
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3 pl-3 pr-3">
+        <div class="d-flex flex-row mb-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="roboto breadcrumb-item active" aria-current="page">
+                        <a th:href="'/karyawan'">Beranda</a>
+                    </li>
+                    <li class="roboto breadcrumb-item active" aria-current="page">
+                        <a th:href="'/karyawan/rekanseproyek'">Rekan Seproyek</a>
+                    </li>
+                </ol>
+            </nav>
+            <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+        </div>
+
+        <div th:if="${noPenugasan != null}" class="d-flex flex-row mb-2">
+            <h3 class="montserrat-small alert alert-warning">Anda belum terdaftar di penugasan proyek manapun</h3>
+        </div>
+
+        <div th:if="${noPenugasan == null}">
+            <div class="d-flex flex-row mb-3">
+                <h2 class="montserrat-bold-big">Daftar Seluruh Rekan Seproyek</h2>
+                <div th:if="${periodeOut != null}" class="d-flex flex-row ml-auto">
+                    <h3 th:text="${periodeOut}"
+                        class="montserrat-small alert alert-warning"></h3>
+                </div>
+            </div>
+
+            <div th:if="${successEdit != null}" class="d-flex flex-row mb-2">
+                <h3 th:text="${successEdit}"
+                    class="montserrat-small alert alert-success"></h3>
+            </div>
+
+            <hr>
+
+            <div class="d-flex flex-row mb-2">
+                <div class="col text-center">
+                    <h3 class="montserrat-med-bold" th:text="${periodeNow.month + ' ' + periodeNow.year}"></h3>
+                </div>
+            </div>
+            <div class="d-flex flex-row mb-5">
+                <div class="col text-left">
+                    <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded"
+                       th:href="@{'/karyawan/rekanseproyek'(periode=${prevPeriode.month + ' ' + prevPeriode.year})}"
+                       th:text="${prevPeriode.month + ' ' + prevPeriode.year}" >
+                    </a>
+                </div>
+                <div class="col text-center">
+                    <div class="row">
+                        <form action="#" th:action="@{/karyawan/rekanseproyek}" method="get">
+                            <input name="periode" id="periode" class="date-picker" readonly="true" required/>
+                            <input class="montserrat-small btn pusil-btn btn-dark text-white btn-rounded" type="submit" value="Pilih Periode" />
+                        </form>
+                    </div>
+                </div>
+                <div class="col text-right">
+                    <div th:if="${offPeriode != null}">
+                        <a class="montserrat-small btn btn-secondary text-white btn-rounded disabled"
+                           th:href="@{'/karyawan/rekanseproyek'(periode=${nextPeriode.month + ' ' + nextPeriode.year})}"
+                           th:text="${nextPeriode.month + ' ' + nextPeriode.year}" >
+                        </a>
+                    </div>
+                    <div th:if="${offPeriode == null}">
+                        <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded"
+                           th:href="@{'/karyawan/rekanseproyek'(periode=${nextPeriode.month + ' ' + nextPeriode.year})}"
+                           th:text="${nextPeriode.month + ' ' + nextPeriode.year}" >
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div th:if="${notification != null}" class="d-flex flex-row mb-3 col-md-12">
+                <h3 th:text="${notification}"
+                    class="montserrat-small alert alert-info"></h3>
+            </div>
+
+            <div th:if="${notification == null}">
+                <table id="rekan-seproyek" class="table table-hover mt-3">
+                    <thead id="tabel-header">
+                    <tr>
+                        <th class="montserrat-small-bold" scope="col">Nama</th>
+                        <th class="montserrat-small-bold" scope="col">Kode Proyek</th>
+                        <th class="montserrat-small-bold" scope="col">Role di Proyek</th>
+                        <th class="montserrat-small-bold" scope="col">Nilai (1-100)</th>
+                        <th class="montserrat-small-bold" scope="col">Feedback</th>
+                        <th class="montserrat-small-bold" scope="col">Aksi</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <div th:each="rekan,iterationStatus: ${rekans}">
+                        <tr>
+                            <td class="montserrat-small" th:text="${rekan.namaRekan}"></td>
+                            <td class="montserrat-small" th:text="${rekan.kodeProyek}"></td>
+                            <td class="montserrat-small" th:text="${rekan.roleRekan}"></td>
+                            <td>
+                                <div th:if="${rekan.ratingRekan == 0}">
+                                    <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
+                                    <p class="d-inline montserrat-small text-muted" th:text="${rekan.ratingRekan}"></p>
+                                </div>
+                                <div th:if="${rekan.ratingRekan > 0 && rekan.ratingRekan <= 60}">
+                                    <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
+                                    <p class="d-inline montserrat-small text-muted" th:text="${rekan.ratingRekan}"></p>
+                                </div>
+                                <div th:if="${rekan.ratingRekan >= 61 && rekan.ratingRekan <= 80}">
+                                    <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
+                                    <p class="d-inline montserrat-small text-muted" th:text="${rekan.ratingRekan}"></p>
+                                </div>
+                                <div th:if="${rekan.ratingRekan >= 81 && rekan.ratingRekan <= 100}">
+                                    <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
+                                    <p class="d-inline montserrat-small text-muted" th:text="${rekan.ratingRekan}"></p>
+                                </div>
+
+                            </td>
+                            <td class="montserrat-small text-muted" th:text="${rekan.feedback}"></td>
+                            <td>
+                                <div th:if="${noFeedback == null}">
+                                    <div th:if="${periodeOut != null}">
+                                        <button type="button" data-toggle="modal"
+                                                class="montserrat-small btn btn-secondary text-white btn-rounded disabled">Ubah</button>
+                                    </div>
+                                    <div th:if="${periodeOut == null}">
+                                        <button type="button" data-toggle="modal" data-target="#feedbackModal" data-title="Masukan Feedback dan Nilai Rekan"
+                                                th:attr="data-feedback=${rekan.feedback},data-rating=${rekan.ratingRekan}, data-namaRekan=${rekan.namaRekan}, data-idRekan=${rekan.idRekan}
+                                    ,data-kodeProyek=${rekan.kodeProyek}" class="modal-button montserrat-small pusil-btn btn btn-dark text-white btn-rounded">Ubah</button>
+                                    </div>
+                                </div>
+                                <div th:if="${noFeedback != null}">
+                                    <div th:if="${periodeOut != null}">
+                                        <button type="button" data-toggle="modal"
+                                                class="montserrat-small btn btn-secondary text-white btn-rounded disabled">Tambah</button>
+                                    </div>
+                                    <div th:if="${periodeOut == null}">
+                                        <button type="button" data-toggle="modal" data-target="#feedbackModal" data-title="Masukan Feedback dan Nilai Rekan"
+                                                th:attr="data-feedback=${rekan.feedback},data-rating=${rekan.ratingRekan}, data-namaRekan=${rekan.namaRekan}, data-idRekan=${rekan.idRekan}
+                                    ,data-kodeProyek=${rekan.kodeProyek}" class="modal-button montserrat-small pusil-btn btn btn-dark text-white btn-rounded">Tambah</button>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </div>
+                    <div th:if="${rekansNoFeedback != null}" th:each="rekanNo,iterationStatus: ${rekansNoFeedback}">
+                        <tr>
+                            <td class="montserrat-small" th:text="${rekanNo.namaRekan}"></td>
+                            <td class="montserrat-small" th:text="${rekanNo.kodeProyek}"></td>
+                            <td class="montserrat-small" th:text="${rekanNo.roleRekan}"></td>
+                            <td>
+                                <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
+                                <p class="d-inline montserrat-small text-muted">0</p>
+                            </td>
+                            <td class="montserrat-small text-muted">Belum Memberikan Feedback</td>
+                            <td>
+                                <div th:if="${periodeOut == null}">
+                                    <button type="button" data-toggle="modal" data-target="#feedbackModal" data-title="Masukan Feedback dan Nilai Rekan"
+                                            th:attr="data-feedback=${rekanNo.feedback},data-rating=${rekanNo.ratingRekan}, data-namaRekan=${rekanNo.namaRekan}, data-idRekan=${rekanNo.idRekan}
+                                    ,data-kodeProyek=${rekanNo.kodeProyek}" class="modal-button montserrat-small pusil-btn btn btn-dark text-white btn-rounded">Tambah</button>
+                                </div>
+                                <div th:if="${periodeOut != null}">
+                                    <button type="button" data-toggle="modal"
+                                            class="montserrat-small btn btn-secondary text-white btn-rounded disabled">Tambah</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </div>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:if="${notification == null}">
+                <div class="d-flex flex-row mb-1">
+                    <div class="col text-center">
+                        <h3 class="montserrat-small text-muted">
+                            Keterangan Rentang Nilai:
+                        </h3>
+                    </div>
+                </div>
+                <div class="d-flex flex-row mb-1">
+                    <div class="col text-center">
+                        <h3 class="montserrat-small text-muted">
+                            <img class="d-inline icon-sidebar mr-1" src="/img/gold-star.png">: 81-100
+                        </h3>
+                    </div>
+                </div>
+                <div class="d-flex flex-row mb-1">
+                    <div class="col text-center">
+                        <h3 class="montserrat-small text-muted">
+                            <img class="d-inline icon-sidebar mr-1" src="/img/silver-star.png">: 61-80
+                        </h3>
+                    </div>
+                </div>
+                <div class="d-flex flex-row mb-1">
+                    <div class="col text-center">
+                        <h3 class="montserrat-small text-muted">
+                            <img class="d-inline icon-sidebar mr-1" src="/img/bronze-star.png">: 1-60
+                        </h3>
+                    </div>
+                </div>
+                <div class="d-flex flex-row mb-2">
+                    <div class="col text-center">
+                        <h3 class="montserrat-small text-muted">
+                            <img class="d-inline icon-sidebar mr-1" src="/img/black-star.png">: Belum Dinilai
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+
+    <div th:replace="fragments/fragment :: footer"></div>
+
+    <script type="text/javascript">
+        $(function() {
+            $('.date-picker').datepicker( {
+                changeMonth: true,
+                changeYear: true,
+                showButtonPanel: true,
+                dateFormat: 'MM yy',
+                onClose: function(dateText, inst) {
+                    $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+                }
+            });
+        });
+    </script>
+    <style>
+        .ui-datepicker-calendar {
+            display: none;
+        }
+    </style>
+
+    <div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" aria-labelledby="feedbackModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title montserrat-med-bold" id="feedbackModalLabel">Masukkan Feedback untuk Rekan Anda</h5>
+                </div>
+                <div class="modal-body">
+                    <form action="#" th:action="@{/karyawan/rekanseproyek/feedback}" method="get">
+                        <div class="form-group">
+                            <div class="form-row">
+                                <div class="col-md-10">
+                                    <label for="namaRekan" class="col-form-label montserrat-small">Nama Rekan</label>
+                                    <input id="namaRekan" class="form-control" readonly="true" name="namaRekan"/>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="col-md-5">
+                                    <label for="idRekan" class="col-form-label montserrat-small">ID Rekan</label>
+                                    <input id="idRekan" class="form-control" readonly="true" name="idRekan"/>
+                                </div>
+                                <div class="col-md-5">
+                                    <label for="kodeProyek" class="col-form-label montserrat-small">Kode Proyek</label>
+                                    <input id="kodeProyek" class="form-control" readonly="true" name="kodeProyek"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="feedback" class="col-form-label montserrat-small">Feedback</label>
+                            <textarea type="text" class="form-control" id="feedback" name="feedback" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="rating" class="col-form-label montserrat-small">Nilai 1 - 100</label>
+                            <input id="rating" class="form-control" type="number" min="0" max="100" name="ratingRekan" required/>
+                        </div>
+                        <button type="button" class="montserrat-small pusil-btn-danger btn btn-danger text-white btn-rounded"
+                                data-dismiss="modal">Batal</button>
+                        <button type="submit" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded">
+                            Simpan Penilaian</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

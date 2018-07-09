@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+    <div th:replace="fragments/fragment :: navbar"></div>
+    <div th:replace="fragments/fragment :: sidebar"></div>
+
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+        <div class="d-flex flex-row mb-3">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="roboto breadcrumb-item active" aria-current="page">
+                        <a th:href="'/eksekutif'">Beranda</a>
+                    </li>
+                    <li class="roboto breadcrumb-item active" aria-current="page">Rekap Proyek</li>
+                </ol>
+            </nav>
+            <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+        </div>
+
+        <h2 class="montserrat-bold-big">Rekap Proyek</h2>
+
+        <hr/>
+
+        <div th:if="${proyek != null}">
+            <div>
+                <br/>
+                <div class="row">
+                    <div class="col-sm-8">
+                        <h3 class="montserrat-med-bold" th:text="${proyek.namaProyek}"></h3><br/>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="montserrat-big-bold">Klien:</h6>
+                        <p class="montserrat-small" th:text="${proyek.namaKlien}"></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6 class="montserrat-big-bold">Periode:</h6>
+                        <p class="montserrat-small" th:text="${proyek.getPeriode()}"></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6 class="montserrat-big-bold">Status Proyek:</h6>
+                        <p class="montserrat-small" th:text="${status}"></p>
+                    </div>
+                </div>
+
+                <br/>
+
+                <div class="row">
+                    <div class="col-sm-3">
+                        <h6 class="montserrat-big-bold">Parent Proyek:</h6>
+                        <a class="montserrat-small" th:if="${parentproyek != null}" th:text="${parentproyek.namaProyek}" th:href="${'/rekap/proyek/' + parentproyek.id}"></a>
+                        <p th:if="${parentproyek ==null}" th:text="kosong" class="montserrat-small text-muted"></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6 class="montserrat-big-bold">Project Lead:</h6>
+                        <a class="montserrat-small" th:if="${projlead != null}" th:text="${projlead.nama}" th:href="${'/rekap/karyawan/riwayat/' + projlead.id}"></a>
+                        <p th:unless="${projlead != null}" th:text="kosong" class="montserrat-small text-muted"></p>
+                    </div>
+                    <div class="col-sm-3">
+                        <h6 class="montserrat-big-bold">Keterangan:</h6>
+                        <p class="montserrat-small" th:if="${!proyek.keterangan.equalsIgnoreCase('')}" th:text="${proyek.keterangan}"></p>
+                        <p th:unless="${!proyek.keterangan.equalsIgnoreCase('')}" th:text="kosong" class="montserrat-small text-muted"></p>
+                    </div>
+                </div><br/><hr/>
+            </div>
+
+            <br/><br/><br/>
+
+            <h5 class="montserrat-med-bold">Anggota Proyek</h5><hr/><br/>
+
+            <div th:if="${#lists.isEmpty(anggotaList)}">
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-8 text-center">
+                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">Proyek </h2>
+                        <h2 class="d-inline text-value text-center text-muted montserrat-med">tidak memiliki anggota</h2>
+                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2"> yang ditugaskan</h2>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+
+            <table id="rekap-proyek" class="table table-hover" th:unless="${#lists.isEmpty(anggotaList)}">
+                <thead class="tabel-header">
+                <tr>
+                    <th class="montserrat-small-bold text-center">Anggota</th>
+                    <th class="montserrat-small-bold text-center">Role</th>
+                    <th class="montserrat-small-bold text-center">Beban Kerja Terakhir</th>
+                    <th class="montserrat-small-bold text-center">Nilai pada Proyek</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="anggota,iterationStatus: ${anggotaList}">
+                    <td><a th:text="${anggota.nama}" th:href="${'/rekap/karyawan/riwayat/' +  anggota.idKaryawan}">Nama Karyawan</a></td>
+                    <td class="montserrat-small text-center text-value" th:text="${anggota.role}">Role</td>
+                    <td class="montserrat-small text-center text-value" th:text="${anggota.persentase + '%'}"></td>
+
+                    <td th:if="${anggota.getIntRating()==0}" class="montserrat-small text-center text-value">
+                        <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
+                        <p class="d-inline montserrat-small text-muted" th:text="${anggota.intRating}"></p>
+                    </td>
+                    <td th:if="${anggota.getIntRating()>0 && anggota.getIntRating()<=60}" class="montserrat-small text-center text-value">
+                        <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
+                        <p class="d-inline montserrat-small text-muted" th:text="${anggota.intRating}"></p>
+                    </td>
+                    <td th:if="${anggota.getIntRating()>60 && anggota.getIntRating()<=80}" class="montserrat-small text-center text-value">
+                        <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
+                        <p class="d-inline montserrat-small text-muted" th:text="${anggota.intRating}"></p>
+                    </td>
+                    <td th:if="${anggota.getIntRating()>80 && anggota.getIntRating()<=100}" class="montserrat-small text-center text-value">
+                        <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
+                        <p class="d-inline montserrat-small text-muted" th:text="${anggota.intRating}"></p>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div th:unless="${proyek != null}">
+            <br/><br/>
+            <div class="col-2"></div>
+            <div class="col-8 text-center">
+                <h3 class="d-inline text-sub text-center mr-2 montserrat">Proyek</h3>
+                <h3 class="d-inline text-value text-center montserrat">tidak terdaftar</h3>
+                <h3 class="d-inline text-sub text-center ml-2 montserrat">pada sistem</h3>
+            </div>
+            <div class="col-2"></div>
+            <br/><br/><br/>
+        </div>
+    </main >
+
+    <div th:replace="fragments/fragment :: footer"></div>
+
+</body>
+</html>

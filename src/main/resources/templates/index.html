@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+<head th:replace="fragments/fragment :: header-title">
 </head>
-<body>
+<body id="index-body">
     <div th:replace="fragments/fragment :: navbar"></div>
     <div th:replace="fragments/fragment :: sidebar"></div>
 
-    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
-        <h1>Berhasil Run</h1>
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3 text-center">
+        <div class="content cover-container d-flex p-3 mx-auto flex-column">
+            <main class="mt-auto mb-auto inner cover" role="main">
+                <h1 class="judul montserrat-bold">SISDM</h1>
+                <h1 class="judul montserrat-bold">MODUL <span class="white">PENUGASAN</span></h1>
+                <h1 class="judul montserrat-bold">DAN <span class="white">PENILAIAN</span></h1>
+                <br>
+                <h1 class="montserrat-regular">PUSILKOM UI</h1>
+                <hr>
+                <p class="montserrat-small">Selamat Datang di SISDM Modul Penugasan dan Penilaian Pusilkom UI</p>
+            </main>
+        </div>
     </main >
 
     <div th:replace="fragments/fragment :: footer"></div>

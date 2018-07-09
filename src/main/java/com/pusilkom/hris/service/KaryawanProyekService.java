@@ -1,19 +1,28 @@
 package com.pusilkom.hris.service;
 
-import com.pusilkom.hris.model.KaryawanModel;
 import com.pusilkom.hris.model.KaryawanProyekModel;
 import com.pusilkom.hris.model.ProyekModel;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public interface KaryawanProyekService {
 
-	List<KaryawanProyekModel> getKaryawanProyekByProyek(int idProyek, int idPeriode);
+	List<KaryawanProyekModel> getKaryawanProyekByProyek(int idProyek, LocalDate periode);
 
-	List<KaryawanProyekModel> getKaryawanProyekByProyek(List<ProyekModel> proyekList, int idPeriode);
+	List<KaryawanProyekModel> getKaryawanProyekByProyek(List<ProyekModel> proyekList, LocalDate periode);
 
-	List<KaryawanProyekModel> getKaryawanProyekByPeriode(int idPeriode);
+	List<KaryawanProyekModel> getKaryawanProyekByPeriode(LocalDate periode);
 
-	List<List<KaryawanProyekModel>> getKaryawanMapping (List<ProyekModel> proyekList, List<KaryawanModel> karyawanList, List<KaryawanProyekModel> karyawanProyekList);
+	List<KaryawanProyekModel> getKaryawanProyekByKaryawan(int idKaryawan);
 
+	KaryawanProyekModel getKaryawanProyekByKaryawanandProyek(int idKaryawan, int idProyek);
+
+	void addKaryawanProyekMatrix(KaryawanProyekModel karyawanProyek, Integer idKaryawan, Integer idProyek, int idRole);
+
+    KaryawanProyekModel getKaryawanProyekById(Integer idKaryawanProyek);
+
+    void updateKaryawanProyek(KaryawanProyekModel karyawanProyek);
+
+    List<KaryawanProyekModel> getKaryawanProyekByProyek(Integer idProyek);
 }

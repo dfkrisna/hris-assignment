@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.pusilkom.hris.model.mapper.AuthItemChildMapper">
+    <resultMap id="AuthItemChildDetailResultMap" type="com.pusilkom.hris.dto.view.AuthItemChildDetail">
+        <result column="parent" jdbcType="VARCHAR" property="parent"/>
+        <result column="child" jdbcType="VARCHAR" property="child"/>
+    </resultMap>
+    <resultMap id="AuthItemChildItemResultMap" type="com.pusilkom.hris.dto.table.AuthItemChildItem">
+        <result column="parent" jdbcType="VARCHAR" property="parent"/>
+        <result column="child" jdbcType="VARCHAR" property="child"/>
+        <result column="id" jdbcType="VARCHAR" property="id"/>
+    </resultMap>
+
+    <sql id="Main_Query">
+        SELECT *, concat(parent,'|',child) AS id FROM auth_item_child
+    </sql>
+    <sql id="Criteria_Where_Clause">
+        <where>
+            <if test="searchForm.parent != ''">
+                AND UPPER(parent) LIKE '%' || UPPER(#{searchForm.parent}) || '%'
+            </if>
+            <if test="searchForm.child != ''">
+                AND UPPER(child) LIKE '%' || UPPER(#{searchForm.child}) || '%'
+            </if>
+        </where>
+
+        ${searchForm.orderQuery}
+    </sql>
+    <select id="getListAuthItemChildItemBySearchForm" resultMap="AuthItemChildItemResultMap" parameterType="map">
+
+        <include refid="Main_Query"/>
+        <include refid="Criteria_Where_Clause"/>
+
+        OFFSET #{searchForm.criterias.start} LIMIT #{searchForm.criterias.length}
+    </select>
+    <select id="getTotalAuthItemChildItemBySearchForm" resultType="java.lang.Long" parameterType="map">
+        SELECT COUNT(*) FROM
+        (
+        <include refid="Main_Query"/>
+        <include refid="Criteria_Where_Clause"/>
+        ) as foo
+    </select>
+</mapper>

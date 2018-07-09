@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+<div th:replace="fragments/fragment :: navbar"></div>
+<div th:replace="fragments/fragment :: sidebar"></div>
+
+<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3 pl-3 pr-3">
+    <div class="d-flex flex-row mb-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="roboto breadcrumb-item active" aria-current="page">
+                    <a th:href="'/karyawan'">Beranda</a>
+                </li>
+                <li class="roboto breadcrumb-item active" aria-current="page">
+                    <a href="'/karyawan/projectlead'">Proyek Dipimpin</a>
+                </li>
+            </ol>
+        </nav>
+        <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+    </div>
+
+    <div class="d-flex flex-row mb-5">
+        <h2 class="montserrat-bold-big mr-2">Proyek Dipimpin</h2>
+    </div>
+
+    <div class="d-flex flex-row mb-2" th:if="${isempty}">
+        <h3 class="montserrat-med text-muted font-italic">Tidak ada proyek yang sedang dipimpin.</h3>
+    </div>
+
+    <div class="d-flex flex-row mb-2" th:unless="${isempty}">
+        <table id="tabel-pengguna" class="table table-hover">
+            <thead class="tabel-header">
+            <tr>
+                <th class="montserrat-small-bold" scope="col">Nama Proyek</th>
+                <th class="montserrat-small-bold" scope="col">Nama Klien</th>
+                <th class="montserrat-small-bold" scope="col">Persentase Kontribusi</th>
+                <th class="montserrat-small-bold" scope="col">Periode</th>
+                <th class="montserrat-small-bold" scope="col">Status</th>
+            </tr>
+            </thead>
+            <div th:each="penugasan,iterationStatus: ${listpenugasan}">
+                <tr>
+                    <td><a class="montserrat-small" th:text="${penugasan.namaProyek}" th:href="${'/karyawan/projectlead/detail/' + penugasan.idProyek}"></a></td>
+                    <td class="montserrat-small" th:text="${penugasan.namaKlien}"></td>
+                    <td class="montserrat-small" th:text="${penugasan.getPersentaseKontribusi()} + '%'"></td>
+                    <td class="montserrat-small" th:text="${penugasan.getPeriode()}"></td>
+                    <td class="montserrat-small" th:text="${penugasan.statusProyek}"></td>
+                </tr>
+            </div>
+        </table>
+    </div>
+
+</main >
+
+<div th:replace="fragments/fragment :: footer"></div>
+
+
+</body>
+</html>

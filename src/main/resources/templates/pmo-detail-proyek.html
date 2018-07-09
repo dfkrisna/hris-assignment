@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+<div th:replace="fragments/fragment :: navbar"></div>
+<div th:replace="fragments/fragment :: sidebar"></div>
+
+<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+
+    <div class="d-flex flex-row mb-3">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="roboto breadcrumb-item active" aria-current="page"><a th:href="'/pmo'" >Beranda</a></li>
+                <li class="roboto breadcrumb-item active" aria-current="page">Detail Proyek</li>
+            </ol>
+        </nav>
+        <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+    </div>
+
+    <div th:if="${notification.length() != 0}" class="d-flex flex-row mb-3 col-md-12">
+        <h3 th:text="${notification}" class="text-primary montserrat-small alert alert-success"></h3>
+    </div>
+
+    <br/><br/>
+
+    <div>
+        <br/>
+        <div class="row">
+            <div class="col-sm-8">
+                <h3 class="montserrat-med-bold" th:text="${proyek.namaProyek}"></h3><br/>
+            </div>
+            <div class="col-sm-2 mr-auto">
+                <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" th:href="@{'/proyek/ubah/'+ ${proyek.getId()} }" style="height:40px; width:160px;"><p th:text="Ubah"></p></a>
+            </div>
+            <div th:if="${status.equalsIgnoreCase('Aktif')}" class="col-sm-2 ml-auto mr-auto">
+                <form th:action="'/proyek/status/' + ${proyek.id}" method="get">
+                    <button type="button" style="height:40px; width:160px;" class="montserrat-small pusil-btn-danger btn btn-dark text-white btn-rounded btn-danger" data-toggle="modal" data-target="#selesai-confirm" >Selesaikan</button>
+                    <div class="modal fade" id="selesai-confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title montserrat-med" id="exampleModalLabel">Selesaikan Proyek</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="montserrat-small">Apakah anda yakin akan mengubah status proyek menjadi selesai?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="montserrat-small pusil-btn-danger btn text-white btn-rounded btn-danger" data-dismiss="modal">Batalkan</button>
+                                    <button type="submit" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" name="newstatus" value="1">Ya</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div th:if="${status.equalsIgnoreCase('Tidak Aktif')}" class="col-sm-2 ml-autp mr-auto">
+                <form th:action="'/proyek/status/' + ${proyek.id}" method="get">
+                    <button type="button" style="height:40px; width:160px;" class="montserrat-small pusil-btn-danger btn btn-dark text-white btn-rounded btn-danger" data-toggle="modal" data-target="#aktif-confirm" >Aktifkan</button>
+                    <div class="modal fade" id="aktif-confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title montserrat-med" id="exampleModalLabel1">Aktifkan Proyek</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p class="montserrat-small">Apakah anda yakin akan mengubah status proyek menjadi aktif?</p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="montserrat-small pusil-btn-danger btn text-white btn-rounded btn-danger" data-dismiss="modal">Batalkan</button>
+                                    <button type="submit" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" name="newstatus" value="2">Ya</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <h6 class="montserrat-big-bold">Klien:</h6>
+                <p class="montserrat-small" th:text="${proyek.namaKlien}"></p>
+            </div>
+            <div class="col-sm-3">
+                <h6 class="montserrat-big-bold">Periode:</h6>
+                <p class="montserrat-small" th:text="${proyek.getPeriode()}"></p>
+            </div>
+            <div class="col-sm-3">
+                <h6 class="montserrat-big-bold">Status Proyek:</h6>
+                <p class="montserrat-small" th:text="${status}"></p>
+            </div>
+        </div><br/>
+
+        <div class="row">
+            <div class="col-sm-3">
+                <h6 class="montserrat-big-bold">Parent Proyek:</h6>
+                <a class="montserrat-small" th:if="${parentproyek != null}" th:text="${parentproyek.namaProyek}" th:href="${'/proyek/detail/' + parentproyek.id}"></a>
+                <p th:if="${parentproyek ==null}" th:text="kosong" class="montserrat-small text-muted"></p>
+            </div>
+            <div class="col-sm-3">
+                <h6 class="montserrat-big-bold">Project Lead:</h6>
+                <a class="montserrat-small" th:if="${projlead != null}" th:text="${projlead.nama}" th:href="${'/pmo/detail-karyawan/' + projlead.id}"></a>
+                <p th:unless="${projlead != null}" th:text="kosong" class="montserrat-small text-muted"></p>
+            </div>
+            <div class="col-sm-3">
+                <h6 class="montserrat-big-bold">Keterangan:</h6>
+                <p class="montserrat-small" th:if="${proyek.keterangan != ''}" th:text="${proyek.keterangan}"></p>
+                <p th:unless="${proyek.keterangan != ''}" th:text="kosong" class="montserrat-small text-muted"></p>
+            </div>
+        </div><br/><hr/>
+    </div>
+
+    <br/><br/><br/>
+    <h5 class="montserrat-med-bold">Sub Proyek</h5><hr/><br/>
+    <p th:if="${#lists.isEmpty(subproyek)}" class="montserrat-small text-muted">kosong</p><br/>
+
+    <table th:if="${not #lists.isEmpty(subproyek)}" id="sub-proyek" class="table table-hover">
+        <thead class="tabel-header">
+        <tr>
+            <th class="montserrat-small-bold text-center">Nama</th>
+            <th class="montserrat-small-bold text-center">Klien</th>
+            <th class="montserrat-small-bold text-center">Periode</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="subproy,iterationStatus: ${subproyek}">
+            <td><a th:text="${subproy.namaProyek}" th:href="${'/proyek/detail/' + subproy.getId()}"></a></td>
+            <td class="montserrat-small text-center text-value" th:text="${subproy.namaKlien}"></td>
+            <td class="montserrat-small text-center text-value" th:text="${subproy.getPeriode()}"></td>
+
+        </tr>
+        </tbody>
+    </table>
+
+
+    <br/><br/><br/>
+    <h5 class="montserrat-med-bold">Anggota Proyek</h5><hr/><br/>
+    <!--tidak ada anggota proyek-->
+    <p th:if="${#lists.isEmpty(anggotaList)}" class="montserrat-small text-muted">kosong</p><br/>
+    <div th:unless="${#lists.isEmpty(anggotaList)}">
+        <table id="rekap-proyek" class="table table-hover">
+            <thead class="tabel-header">
+            <tr>
+                <th class="montserrat-small-bold text-center">Anggota</th>
+                <th class="montserrat-small-bold text-center">Role</th>
+                <th class="montserrat-small-bold text-center">Beban Kerja Terakhir</th>
+                <th class="montserrat-small-bold text-center">Nilai pada Proyek</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="anggota,iterationStatus: ${anggotaList}">
+                <td><a th:text="${anggota.nama}" th:href="${'/pmo/detail-karyawan/' + anggota.idKaryawan}">Nama Karyawan</a></td>
+                <td class="montserrat-small text-center text-value" th:text="${anggota.role}">Role</td>
+                <td class="montserrat-small text-center text-value" th:text="${anggota.persentase + '%'}"></td>
+
+                <td th:if="${anggota.getIntRating()==0}" class="montserrat-small text-center text-value">
+                    <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
+                    <p class="d-inline montserrat-small text-muted" th:text="${anggota.intRating}"></p>
+                </td>
+                <td th:if="${anggota.getIntRating()>0 && anggota.getIntRating()<=60}" class="montserrat-small text-center text-value">
+                    <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
+                    <p class="d-inline montserrat-small text-muted" th:text="${anggota.intRating}"></p>
+                </td>
+                <td th:if="${anggota.getIntRating()>60 && anggota.getIntRating()<=80}" class="montserrat-small text-center text-value">
+                    <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
+                    <p class="d-inline montserrat-small text-muted" th:text="${anggota.intRating}"></p>
+                </td>
+                <td th:if="${anggota.getIntRating()>80 && anggota.getIntRating()<=100}" class="montserrat-small text-center text-value">
+                    <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
+                    <p class="d-inline montserrat-small text-muted" th:text="${anggota.intRating}"></p>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div th:if="${#lists.isEmpty(anggotaList)}">
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    Keterangan Rentang Nilai:
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/gold-star.png">: 81-100
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/silver-star.png">: 61-80
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/bronze-star.png">: 1-60
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-2">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/black-star.png">: Belum Dinilai
+                </h3>
+            </div>
+        </div>
+    </div>
+
+</main >
+
+<div th:replace="fragments/fragment :: footer"></div>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+
+</body>
+</html>

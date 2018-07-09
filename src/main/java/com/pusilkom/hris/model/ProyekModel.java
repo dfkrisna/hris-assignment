@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -11,11 +13,24 @@ public class ProyekModel {
     private int id;
     private String kode;
     private String namaProyek;
+    private int idKlien;
     private String namaKlien;
     private String keterangan;
-    private int idPmo;
-    private int idParent;
-    private int idProjectLead;
-    private int idStartPeriod;
-    private int idEndPeriod;
+    private Integer idPmo;
+    private Integer idParent;
+    private Integer idProjectLead;
+    private String timestamp;
+    private LocalDate startPeriode;
+    private LocalDate endPeriode;
+
+    public String getPeriode() {
+        if (startPeriode == null && endPeriode == null) {
+            return "-";
+        } else if (endPeriode == null) {
+            return startPeriode.getMonth() + " " + startPeriode.getYear() + " - Sekarang";
+        } else {
+            return (startPeriode.getMonth() + " " + startPeriode.getYear() + " - " + endPeriode.getMonth() + " " + endPeriode.getYear());
+        }
+    }
+
 }

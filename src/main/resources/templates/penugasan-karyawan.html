@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+<div th:replace="fragments/fragment :: navbar"></div>
+<div th:replace="fragments/fragment :: sidebar"></div>
+
+<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+    <!--<p>Riwayat Proyek</p>-->
+    <div class="d-flex flex-row mb-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="roboto breadcrumb-item active" aria-current="page"><a th:href="'/karyawan'" >Beranda</a></li>
+                <li class="roboto breadcrumb-item active" aria-current="page">Riwayat Penugasan</li>
+            </ol>
+        </nav>
+        <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+    </div>
+
+    <h2 class="montserrat-bold-big">Riwayat Penugasan</h2><br/>
+
+    <div th:if="${!penugasanKaryawan.isEmpty()}">
+        <table id="tabel-riwayat-penugasan" class="table table-hover montserrat-small">
+            <thead id="tabel-header" class="montserrat-small-bold">
+                <tr>
+                    <th>Proyek</th>
+                    <th>Role Anda</th>
+                    <th>Persentase Kontribusi</th>
+                    <th>Status Proyek</th>
+                    <th>Periode Penugasan</th>
+                </tr>
+            </thead>
+            <tbody class="montserrat-small">
+                <tr th:each="penugasan, iterationStatus:${penugasanKaryawan}" >
+                    <td><a th:text="${penugasan.namaProyek}" th:href="'/karyawan/penugasan/detail/' + ${penugasan.idProyek}"></a></td>
+                    <td th:text="${penugasan.role}"></td>
+                    <td th:text="${#numbers.formatInteger(penugasan.persentase, 1)} + '%'"></td>
+                    <td th:text="${penugasan.statusProyek}"></td>
+                    <td th:text="${penugasan.getPeriode()}"></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div th:if="${penugasanKaryawan.isEmpty()}">
+        <h3 class="montserrat-small alert alert-info">Tidak ada penugasan.</h3>
+    </div>
+</main >
+
+<div th:replace="fragments/fragment :: footer"></div>
+</body>
+
+</html>

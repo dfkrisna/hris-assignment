@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+    <div th:replace="fragments/fragment :: navbar"></div>
+    <div th:replace="fragments/fragment :: sidebar"></div>
+
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3 pl-3 pr-3">
+        <div class="d-flex flex-row mb-5">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="roboto breadcrumb-item active" aria-current="page">
+                        <a th:href="'/admin'">Beranda</a>
+                    </li>
+                </ol>
+            </nav>
+            <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+        </div>
+
+        <div th:if="${notification != null}" class="d-flex flex-row mb-3 col-md-12">
+            <h3 th:text="${notification}"
+                class="text-primary montserrat-small alert alert-success"></h3>
+        </div>
+
+        <div class="d-flex flex-row mb-5">
+            <h2 class="montserrat-bold-big">Tabel Seluruh Pengguna Sistem</h2>
+        </div>
+
+
+        <div class="d-flex flex-row mb-2">
+            <table id="tabel-pengguna" class="table table-hover">
+                <thead class="tabel-header">
+                <tr>
+                    <th class="montserrat-small-bold" scope="col">No.</th>
+                    <th class="montserrat-small-bold" scope="col">Username</th>
+                    <th class="montserrat-small-bold" scope="col">Nama</th>
+                    <th class="montserrat-small-bold" scope="col">Role Pengguna</th>
+                    <th class="montserrat-small-bold" scope="col">Aksi</th>
+                </tr>
+                </thead>
+                <div th:each="pengguna,iterationStatus: ${penggunas}">
+                    <tr>
+                        <td class="montserrat-small" scope="row" th:text="${iterationStatus.count}"></td>
+                        <td class="montserrat-small" th:text="${pengguna.username}"></td>
+                        <td class="montserrat-small" th:text="${pengguna.nama}"></td>
+                        <td class="montserrat-small" th:text="${pengguna.role}"></td>
+                        <td><a th:href="'/admin/updatepengguna/' + ${pengguna.id}" class="d-inline pusil-btn btn btn-dark montserrat-small text-white btn-rounded mr-2">Ubah</a>
+                            <a th:href="'/admin/deletepengguna/' + ${pengguna.id}" class="pusil-btn-danger btn btn-danger montserrat-small text-white btn-rounded">Hapus</a>
+                        </td>
+                    </tr>
+                </div>
+            </table>
+        </div>
+
+    </main >
+
+    <div th:replace="fragments/fragment :: footer"></div>
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+<div th:replace="fragments/fragment :: navbar"></div>
+<div th:replace="fragments/fragment :: sidebar"></div>
+
+<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+    <div class="d-flex flex-row mb-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="roboto breadcrumb-item active" aria-current="page">
+                    <a th:href="'/pmo'">Beranda</a>
+                </li>
+                <li class="roboto breadcrumb-item active" aria-current="page">Tambah Penugasan</li>
+            </ol>
+        </nav>
+        <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+    </div>
+
+    <h2 class="montserrat-bold-big">Kelola Penugasan Anggota</h2>
+    <h3 class="montserrat-med" th:text="${proyek.kode} + ' (' + ${proyek.namaProyek} + ')'"></h3>
+
+    <hr/>
+
+    <div class="d-flex flex-row mb-2 " th:each="karyawan : ${karyawanList}" >
+        <form  th:object="${karyawan}" method="post" th:action="'/pmo/proyek/tambah/assign/' + ${karyawan.id} + '/' + ${proyek.id} + '/'" class="form-horizontal" style="width: 70%">
+            <h3 class="montserrat-med" th:text="${karyawan.nama}"></h3>
+            <input type="hidden" name="selectedKaryawan" th:value="${karyawan.id}"/>
+            <input type="hidden" name="listKaryawanID" th:value="${karyawanIDList}"/>
+            <div class="form-row mb-3">
+                <div class="form-group col mr-2">
+                    <label for="role" class="form-control-static montserrat-small-bold">Role dalam Proyek</label>
+                    <select class="form-control form-rounded custom-select custom-select-md mb-3" name="role" required="required">
+                        <option class="montserrat-small" value="">Select Role</option>
+                        <option class="montserrat-small" th:each="role : ${roles}" th:value="${role.id}" th:text="${role.namaRole}"></option>
+                    </select>
+                </div>
+                <div class="form-group col mr-2">
+                    <label class="montserrat-small-bold" for="persenKontribusi">Persentase Kontribusi (0-1)</label>
+                    <input class="form-control form-rounded montserrat-small"
+                           type="number"
+                           step="0.01"
+                           min="0" max="1"
+                           name="persenKontribusi"
+                           th:value="${persenKontribusi}" required/>
+                </div>
+            </div>
+
+            <div class="form-row mb-3">
+
+                <div class="form-group col mr-2">
+                    <label class="montserrat-small-bold" for="periodeMulai">Periode Mulai</label>
+                    <input class="form-control form-rounded date-picker montserrat-small"
+                           name="periodeMulai"
+                           th:value="${startPeriode}"
+                           readonly="readonly" required
+                           style="background-color: transparent;"/>
+                </div>
+                <div class="form-group col">
+                    <label class="montserrat-small-bold" for="periodeSelesai">Periode Selesai</label>
+                    <input class="form-control form-rounded date-picker montserrat-small"
+                           name="periodeSelesai"
+                           th:value="${endPeriode}"
+                           readonly="readonly"
+                           style="background-color: transparent;"/>
+                </div>
+
+
+            </div>
+
+
+            <div class="form-row mb-3">
+                <div class="form-group col mt-2 ">
+                    <label></label>
+                    <div class="row">
+                        <div class="col-sm-9"></div>
+                        <div class="col-sm-3"><button type="button" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" data-toggle="modal" data-target="#assign-list-confirm">Tugaskan</button></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="assign-list-confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title montserrat-med" id="exampleModalLabel">Tambah Penugasan</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <p class="montserrat-small">Apakah anda yakin akan menambahkan penugasan?</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="montserrat-small pusil-btn-danger btn btn-danger text-white btn-rounded" data-dismiss="modal">Batalkan</button>
+                            <button type="submit" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" name="action" value="save">Tugaskan</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </form>
+    </div>
+
+</main >
+
+<div th:replace="fragments/fragment :: footer"></div>
+<script
+        src="https://code.jquery.com/jquery-3.3.1.js"
+        integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
+        crossorigin="anonymous"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>
+
+<script
+        src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+        integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+        crossorigin="anonymous"></script>
+
+<link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
+<script type="text/javascript">
+    $(function() {
+        $('.date-picker').datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'MM yy',
+            onClose: function(dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+            }
+        });
+    });
+</script>
+<script>
+
+</script>
+<style>
+    .ui-datepicker-calendar {
+        display: none;
+    }
+</style>
+</body>
+</html>

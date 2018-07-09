@@ -1,0 +1,626 @@
+package com.pusilkom.hris.controller;
+
+import com.pusilkom.hris.model.*;
+import com.pusilkom.hris.service.*;
+import org.apache.tomcat.jni.Local;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.security.Principal;
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.function.Predicate;
+
+@Controller
+public class PMOController {
+    @Autowired
+    PenggunaService penggunaDAO;
+
+    @Autowired
+    KlienService klienDAO;
+
+    @Autowired
+    ProyekService proyekDAO;
+
+    @Autowired
+    RekapMappingService rekapMappingDAO;
+
+    @Autowired
+    KaryawanService karyawanDAO;
+
+    @Autowired
+    PenugasanService penugasanDAO;
+
+    @Autowired
+    KaryawanProyekService karyawanProyekDAO;
+
+    @Autowired
+    RekapService rekapDAO;
+
+    @Autowired
+    DivisiService divisiDAO;
+
+    @Autowired
+    RatingFeedbackService ratingFeedbackDAO;
+
+    @GetMapping("/proyek/tambah")
+    public String addProyek(Model model, Principal principal) {
+        PenggunaModel pengguna = penggunaDAO.getPenggunaLama(principal.getName());
+        ProyekModel proyek = new ProyekModel();
+        proyek.setIdPmo(pengguna.getId());
+        proyek.setStartPeriode(null);
+        proyek.setEndPeriode(null);
+        model.addAttribute("proyek", proyek);
+        String dateToday = rekapMappingDAO.getCurrentDate();
+        model.addAttribute("date_today", dateToday);
+
+
+        List<ProyekModel> parentProyek = null;
+        parentProyek = proyekDAO.selectProyekByPeriodePmo(LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1));
+        model.addAttribute("parentproy", parentProyek);
+
+        List<KlienModel> listklien;
+        listklien = klienDAO.selectAllKlien();
+        System.out.println(listklien);
+        if (listklien != null) {
+            model.addAttribute("listklien", listklien);
+        }
+        return "pmo-form-addproyek";
+
+    }
+
+    @PostMapping(value = "/proyek/tambah")
+    public String addProyekSubmit(Model model, @ModelAttribute ProyekModel proyek, @RequestParam(value = "startdate", required = false) String startPeriode,
+                                  @RequestParam(value = "enddate", required = false) String endPeriode) {
+        if (proyek == null) {
+//            model.addAttribute("errorMessage", "data tidak bisa kosong");
+//            return "error/404";
+
+            return "index";
+        }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d MMMM yyyy");
+
+        if (!startPeriode.equals("")) {
+            LocalDate startperiode = LocalDate.parse("1 " + startPeriode, formatter);
+            proyek.setStartPeriode(LocalDate.of(startperiode.getYear(), startperiode.getMonthValue(), 1));
+        }
+
+        System.out.println(endPeriode);
+
+        if (!endPeriode.equals("")) {
+            LocalDate endperiode = LocalDate.parse("1 " + endPeriode, formatter);
+            proyek.setEndPeriode(LocalDate.of(endperiode.getYear(), endperiode.getMonthValue(), 1));
+        }
+
+        proyekDAO.addProyek(proyek);
+
+        Integer proyekID;
+        ProyekModel baru = proyekDAO.getProyekByKode(proyek.getKode());
+        proyekID = baru.getId();
+
+        proyekDAO.addProyekStatus(proyekID, 2);
+        model.addAttribute("proyek", proyek);
+
+        return "redirect:/pmo/proyek/tambah/assign/" + proyekID;
+    }
+
+    @GetMapping("/proyek/ubah/{id}")
+    public String ubahProyek(Model model, @PathVariable(value = "id") Integer id) {
+
+        String dateToday = rekapMappingDAO.getCurrentDate();
+        model.addAttribute("date_today", dateToday);
+
+
+        if (id == null) {
+//            model.addAttribute("errorMessage", "id tidak ditemukan");
+//            return "error/404";
+        }
+        //ambil data proyek sebelumnya
+        ProyekModel proyek = proyekDAO.selectProyekByIdPmo(id);
+
+        if (proyek != null) {
+            model.addAttribute("proyek", proyek);
+            String periodemulai = "";
+            String periodeselesai = "";
+
+            //menampilkan periode sebelumnya
+            if (proyek.getStartPeriode() != null) {
+                periodemulai = proyek.getStartPeriode().getMonth().toString() + " " + proyek.getStartPeriode().getYear();
+            }
+            if (proyek.getEndPeriode() != null) {
+                periodeselesai = proyek.getEndPeriode().getMonth().toString() + " " + proyek.getEndPeriode().getYear();
+            }
+
+            model.addAttribute("startdate", periodemulai);
+            model.addAttribute("enddate", periodeselesai);
+
+            //menampilkan parent proyek
+            List<ProyekModel> parentProyek = null;
+            parentProyek = proyekDAO.selectProyekByPeriodePmo(LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1));
+            if (proyek.getIdParent() != null) {
+                ProyekModel parentProy = proyekDAO.selectProyekByIdPmo(proyek.getIdParent());
+                model.addAttribute("parentID", parentProy.getId());
+                model.addAttribute("parentName", parentProy.getNamaProyek());
+                Predicate<ProyekModel> proyekPredicate = p -> p.getId() == parentProy.getId();
+                parentProyek.removeIf(proyekPredicate);
+            }
+            model.addAttribute("parentproy", parentProyek);
+
+
+            //menampilkan status proyek
+            String statusproyek = penugasanDAO.getLatestStatus(proyek.getId());
+            System.out.println(statusproyek);
+            model.addAttribute("statproy", statusproyek);
+
+            //menampilkan klien proyek
+            List<KlienModel> klienProyek = null;
+            klienProyek = klienDAO.selectAllKlien();
+            KlienModel klienNow = klienDAO.selectKlienByID(proyek.getIdKlien());
+            model.addAttribute("klien", klienNow);
+            Predicate<KlienModel> klienPredicate = k -> k.getId() == klienNow.getId();
+            klienProyek.removeIf(klienPredicate);
+            model.addAttribute("listklien", klienProyek);
+
+            return "pmo-form-updateproyek";
+        } else {
+//            model.addAttribute("errorMessage", "proyek id " +id+" Tidak Ditemukan");
+//            return "error/404";
+            return "index";
+        }
+
+    }
+
+    @PostMapping(value = "/proyek/ubah/{id}")
+    public String ubahProyek(Model model, @ModelAttribute ProyekModel proyek,
+                             @RequestParam(value = "startdate", required = false) String startPeriode,
+                             @RequestParam(value = "enddate", required = false) String endPeriode) {
+
+
+        String dateToday = rekapMappingDAO.getCurrentDate();
+        model.addAttribute("date_today", dateToday);
+
+
+        if (proyek == null) {
+//            model.addAttribute("errorMessage", "Data Tidak Bisa Kosong");
+//            return "error/404";
+            System.out.println("masuk null");
+            return "index";
+        }
+
+        DateTimeFormatter formatter = new DateTimeFormatterBuilder().parseCaseInsensitive().appendPattern("d MMMM yyyy").toFormatter(Locale.ENGLISH);
+
+        if (!startPeriode.equals("")) {
+            LocalDate startperiode = LocalDate.parse("1 " + startPeriode, formatter);
+            proyek.setStartPeriode(LocalDate.of(startperiode.getYear(), startperiode.getMonthValue(), 1));
+        }
+
+//        System.out.println(endPeriode);
+//
+//        if (!endPeriode.equals("")) {
+//            LocalDate endperiode = LocalDate.parse("1 " + endPeriode, formatter);
+//            proyek.setEndPeriode(LocalDate.of(endperiode.getYear(), endperiode.getMonthValue(), 1));
+//        }
+
+
+//        if(statusProyek != null) {
+
+//            String statusLama = penugasanDAO.getLatestStatus(proyek.getId());
+//            Integer idStatus = null;
+//
+//
+//            if(statusLama != null && !statusLama.equalsIgnoreCase(statusProyek)) {
+//                //add status
+//
+//                if(statusProyek.equalsIgnoreCase("Selesai")) {
+//                    idStatus = 4;
+//                    System.out.println("masukni");
+//                }
+//                if(statusProyek.equalsIgnoreCase("Aktif")) {
+//                    idStatus = 2;
+//                }
+//
+//                if(statusProyek.equalsIgnoreCase("Berjalan")){
+//                    idStatus = 3;
+//                }
+//
+//                proyekDAO.addProyekStatus(proyek.getId(),idStatus);
+//            }
+//            String idStatus = "";
+//
+//            if(statusProyek.equalsIgnoreCase("Aktif")) {
+//                idStatus = "Aktif";
+//            }
+//            if(statusProyek.equalsIgnoreCase("Tidak Aktif")){
+//                idStatus = "Tidak Aktif";
+//            }
+//            penugasanDAO.addStatusProyek(idStatus,proyek.getId(), LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1));
+//        }
+
+        proyekDAO.updateProyek(proyek);
+
+        proyek.setNamaKlien(klienDAO.selectKlienByID(proyek.getIdKlien()).getNama());
+
+        model.addAttribute("proyek", proyek);
+//        model.addAttribute("status", statusProyek);
+        model.addAttribute("notification", "Data proyek berhasil di ubah");
+        model.addAttribute("status", penugasanDAO.getLatestStatus(proyek.getId()));
+        model.addAttribute("subproyek", proyekDAO.selectProyekByIdParent(proyek.getId()));
+        if (proyek.getIdProjectLead() != null && proyek.getIdProjectLead() != 0) {
+
+            KaryawanProyekModel karprolead = karyawanProyekDAO.getKaryawanProyekById(proyek.getIdProjectLead());
+            KaryawanModel projlead = karyawanDAO.getKaryawanById(karprolead.getIdKaryawan());
+
+
+            System.out.println("ini projelad " + projlead.getNama());
+            model.addAttribute("projlead", projlead);
+        }
+
+        if (proyek.getIdParent() != null) {
+            System.out.println("ini parent proyek " + proyekDAO.getProyekById(proyek.getIdParent()).getNamaProyek());
+            model.addAttribute("parentproyek", proyekDAO.getProyekById(proyek.getIdParent()));
+        }
+
+        return "pmo-detail-proyek";
+
+
+    }
+
+    @GetMapping("/proyek/detail/{id}")
+    public String detailProyek(Model model, @PathVariable(value = "id") Integer id,
+                               @ModelAttribute("notification") String notification) {
+
+        ProyekModel proyek = proyekDAO.getProyekById(id);
+
+        String periodemulai = "";
+        String periodeselesai = "";
+
+
+        if (proyek.getStartPeriode() != null) {
+            periodemulai = proyek.getStartPeriode().getMonth().toString() + " " + proyek.getStartPeriode().getYear();
+        }
+
+        if (proyek.getEndPeriode() != null) {
+            periodeselesai = proyek.getEndPeriode().getMonth().toString() + " " + proyek.getEndPeriode().getYear();
+        }
+
+        String dateToday = rekapMappingDAO.getCurrentDate();
+        model.addAttribute("date_today", dateToday);
+
+        model.addAttribute("status", penugasanDAO.getLatestStatus(proyek.getId()));
+        model.addAttribute("startdate", periodemulai);
+        model.addAttribute("enddate", periodeselesai);
+
+
+        List<KaryawanAnggotaModel> anggotaList = penugasanDAO.getAnggotaProyek(id);
+        model.addAttribute("anggotaList", anggotaList);
+
+        List<ProyekModel> subproyek = proyekDAO.selectProyekByIdParent(id);
+        model.addAttribute("subproyek", subproyek);
+
+        proyek.setNamaKlien(klienDAO.selectKlienByID(proyek.getIdKlien()).getNama());
+
+        if (notification != null) {
+            model.addAttribute("notification", notification);
+        }
+
+        if (proyek.getIdProjectLead() != null && proyek.getIdProjectLead() != 0) {
+
+            KaryawanProyekModel karprolead = karyawanProyekDAO.getKaryawanProyekById(proyek.getIdProjectLead());
+            KaryawanModel projlead = karyawanDAO.getKaryawanById(karprolead.getIdKaryawan());
+
+
+            System.out.println("ini projelad " + projlead.getNama());
+            model.addAttribute("projlead", projlead);
+        }
+
+        if (proyek.getIdParent() != null) {
+            System.out.println("ini parent proyek " + proyekDAO.getProyekById(proyek.getIdParent()).getNamaProyek());
+            model.addAttribute("parentproyek", proyekDAO.getProyekById(proyek.getIdParent()));
+        }
+
+        model.addAttribute("proyek", proyek);
+
+        return "pmo-detail-proyek";
+    }
+
+    @GetMapping("/karyawan/projectlead")
+    public String listProyekDipimin(Model model, Principal principal) {
+        String dateToday = rekapMappingDAO.getCurrentDate();
+        model.addAttribute("date_today", dateToday);
+
+        PenggunaModel pengguna = penggunaDAO.getPenggunaLama(principal.getName());
+        KaryawanModel projlead = karyawanDAO.getKaryawanByIdPengguna(pengguna.getId());
+        List<PenugasanModel> listpenugasan = proyekDAO.selectProyekDipimpin(projlead.getId());
+        model.addAttribute("listpenugasan", listpenugasan);
+        model.addAttribute("isempty", listpenugasan.isEmpty());
+        if (!listpenugasan.isEmpty()) {
+            String itu = listpenugasan.get(0).getPersentase() + "";
+            System.out.println("get persentase : " + itu);
+
+            itu = listpenugasan.get(0).getKontribusi() + "";
+            System.out.println("get kontribusi : " + itu);
+
+            itu = listpenugasan.get(0).getPersentaseKontribusi() + "";
+            System.out.println("get persentase kontribusi : " + itu);
+
+
+        }
+        return "projectlead-listproyek";
+    }
+
+
+    @GetMapping("/karyawan/projectlead/detail/{id}")
+    public String detailProyekProjlead(Model model, @PathVariable(value = "id") Integer id, Principal principal) {
+        String dateToday = rekapMappingDAO.getCurrentDate();
+        model.addAttribute("date_today", dateToday);
+
+        PenggunaModel pengguna = penggunaDAO.getPenggunaLama(principal.getName());
+        KaryawanModel projlead = karyawanDAO.getKaryawanByIdPengguna(pengguna.getId());
+        PenugasanModel penugasan = penugasanDAO.getDetailPenugasanById(id, projlead.getId());
+        model.addAttribute("penugasan", penugasan);
+        ProyekModel proyek = proyekDAO.getProyekById(id);
+        model.addAttribute("proyek", proyek);
+        String status = penugasanDAO.getLatestStatus(proyek.getId());
+        model.addAttribute("status", status);
+//        List<KaryawanAnggotaModel> anggotaList = penugasanDAO.getAnggotaProyek(id);
+//        model.addAttribute("anggotaList",anggotaList);
+        List<PenugasanModel> anggotaList = penugasanDAO.getListPenugasan(id);
+
+        Predicate<PenugasanModel> projleadPredicate = p -> p.getIdKaryawan() == projlead.getId();
+        anggotaList.removeIf(projleadPredicate);
+
+        model.addAttribute("anggotaList", anggotaList);
+
+        if(proyek.getIdParent() != null) {
+            System.out.println("ini parent proyek " + proyekDAO.getProyekById(proyek.getIdParent()).getNamaProyek());
+            model.addAttribute("parentproyek",proyekDAO.getProyekById(proyek.getIdParent()));
+        }
+
+        model.addAttribute("subproyek",proyekDAO.selectProyekByIdParent(proyek.getId()));
+        return "projectlead-detailproyek";
+    }
+
+    @GetMapping("/karyawan/projectlead/detail/{idProyek}/{idKaryawan}")
+    public String detailKarproProjlead(Model model, @PathVariable(value = "idProyek") Integer idProyek,
+                                       @PathVariable(value = "idKaryawan") Integer idKaryawan,
+                                       @RequestParam(value = "periode", required = false) String periode,
+                                       @ModelAttribute("notification") String notification) {
+
+        String dateToday = rekapMappingDAO.getCurrentDate();
+        model.addAttribute("date_today", dateToday);
+
+        LocalDate periodeDate;
+        if (periode != null) {
+            String[] split = periode.split(" ");
+            periodeDate = LocalDate.of(Integer.parseInt(split[1]), Month.valueOf(split[0].toUpperCase()), 1);
+        } else {
+            periodeDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1);
+        }
+
+        ProyekModel proyek = proyekDAO.getProyekById(idProyek);
+        KaryawanModel karyawan = karyawanDAO.getKaryawanById(idKaryawan);
+
+        KaryawanRekapModel karyawanRekap = rekapMappingDAO.getRekapBulananKaryawanProyek(idKaryawan, idProyek);
+
+        if (notification != null) {
+            model.addAttribute("notification", notification);
+        }
+
+        boolean isEmpty = false;
+        if (karyawanRekap.getRekapList() == null || karyawanRekap.getRekapList().isEmpty()) {
+            isEmpty = true;
+        }
+
+        model.addAttribute("isEmpty", isEmpty);
+        model.addAttribute("karyawanRekap", karyawanRekap);
+        model.addAttribute("next", periodeDate.plusMonths(1));
+        model.addAttribute("current", periodeDate);
+        model.addAttribute("previous", periodeDate.minusMonths(1));
+
+        model.addAttribute("proyek", proyek);
+        model.addAttribute("karyawan", karyawan);
+
+
+        List<RatingFeedbackModel> listRF;
+        listRF = ratingFeedbackDAO.selectRatingFeedbackKP(idProyek, idKaryawan);
+        boolean isEmptyRF = false;
+        if (listRF.isEmpty()) {
+            isEmptyRF = true;
+        }
+        model.addAttribute("isEmptyRF", isEmptyRF);
+        model.addAttribute("listRF", listRF);
+        return "projectlead-detailkaryawan";
+    }
+
+
+//    @RequestMapping("/karyawan/projectlead/detail/{idproyek}/{idkaryawan}")
+//    public String showDetailKaryawan(Model model,
+//                                     @RequestParam(value = "periode", required = false) String periode,
+//                                     @PathVariable(value = "idproyek") int idProyek,
+//                                     @PathVariable(value = "idkaryawan") int idKaryawan,
+//                                     @ModelAttribute("notification") String notification) {
+//        LocalDate periodeDate;
+//        if(periode != null) {
+//            String[] split = periode.split(" ");
+//            periodeDate = LocalDate.of(Integer.parseInt(split[1]), Month.valueOf(split[0].toUpperCase()), 1);
+//        } else { periodeDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1); }
+//
+//        KaryawanModel karyawan = karyawanService.getKaryawanById(idKaryawan);
+//
+//        KaryawanRekapModel karyawanRekap = rekapMappingService.getRekapBulananKaryawanProyek(idKaryawan, idProyek);
+//
+//        if(notification != null) {
+//            model.addAttribute("notification", notification);
+//        }
+//
+//        System.out.println("ini panjang list lhoooo ngapa ga muncul siihhhh huftt" + karyawanRekap.getRekapList().size());
+//
+//        boolean isEmpty = false;
+//        if(karyawanRekap.getRekapList() == null || karyawanRekap.getRekapList().isEmpty()) {
+//            isEmpty = true;
+//        }
+//
+//        model.addAttribute("isEmpty", isEmpty);
+//        model.addAttribute("karyawanRekap", karyawanRekap);
+//        model.addAttribute("next", periodeDate.plusMonths(1));
+//        model.addAttribute("current", periodeDate);
+//        model.addAttribute("previous", periodeDate.minusMonths(1));
+//
+//        return "projectlead-detailkaryawan";
+//    }
+
+    @PostMapping(value = "/karyawan/projectlead/detail/finalisasi")
+    public String finalisasi(Model model,
+                             RedirectAttributes ra,
+                             @RequestParam(value = "periode") String periode,
+                             @RequestParam(value = "idKarProy") int idKarProy) {
+        LocalDate periodeDate = LocalDate.parse(periode, DateTimeFormatter.ofPattern("yyyy-MM-dd"));
+
+        KaryawanProyekModel karyawanProyek = karyawanProyekDAO.getKaryawanProyekById(idKarProy);
+
+        System.out.println(idKarProy + " <- id kar proy; periode date -> " + periodeDate);
+
+        RekapModel rekap = rekapDAO.getRekapBulanan(idKarProy, periodeDate);
+        rekap.setApproved(true);
+        rekapDAO.updateRekap(rekap);
+
+        String notification = "Evaluasi mandiri berhasil difinalisasi";
+
+        ra.addFlashAttribute("notification", notification);
+
+        return "redirect:/karyawan/projectlead/detail/" + karyawanProyek.getIdProyek() + "/" + karyawanProyek.getIdKaryawan();
+    }
+
+    @RequestMapping(value = "pmo/detail-karyawan/{idKar}")
+    public String showDetailKaryawan(Model model,
+                                     @RequestParam(value = "periode", required = false) String periode,
+                                     @PathVariable(value = "idKar") int idKaryawan) {
+        String dateToday = rekapMappingDAO.getCurrentDate();
+        model.addAttribute("date_today", dateToday);
+
+        LocalDate periodeNow = LocalDate.now();
+
+        LocalDate periodeDate;
+        if (periode != null) {
+            String[] split = periode.split(" ");
+            periodeDate = LocalDate.of(Integer.parseInt(split[1]), Month.valueOf(split[0].toUpperCase()), 1);
+        } else {
+            periodeDate = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1);
+        }
+
+        KaryawanModel karyawan = karyawanDAO.getKaryawanById(idKaryawan);
+
+        DivisiModel divisi = divisiDAO.getDivisiByID(karyawan.getIdDivisi());
+
+        KaryawanRekapModel karyawanRekap = rekapMappingDAO.getRekapBulananKaryawan(periodeDate, idKaryawan);
+
+        Map mapRekapProyek = new HashMap();
+
+        List<RekapModel> rekapList = karyawanRekap.getRekapList();
+
+        if (!rekapList.isEmpty()) {
+            for (RekapModel rekap : rekapList) {
+                ProyekModel proyek = proyekDAO.getProyekById(rekap.getIdProyek());
+                mapRekapProyek.put(rekap.getId(), proyek);
+            }
+        }
+        boolean isNow = false;
+        if (periodeDate.getYear() == periodeNow.getYear() && periodeDate.getMonth().equals(periodeNow.getMonth())) {
+            isNow = true;
+        }
+
+        model.addAttribute("isNow", isNow);
+        model.addAttribute("next", periodeDate.plusMonths(1));
+        model.addAttribute("isEmpty", rekapList.isEmpty());
+        model.addAttribute("karyawanRekap", karyawanRekap);
+        model.addAttribute("mapRekapProyek", mapRekapProyek);
+        model.addAttribute("divisi", divisi);
+        model.addAttribute("current", periodeDate);
+        model.addAttribute("previous", periodeDate.minusMonths(1));
+
+        List<RatingFeedbackModel> listRF;
+        listRF = ratingFeedbackDAO.selectRatingFeedbackPer(idKaryawan, periodeDate);
+        boolean isEmptyRF = false;
+        if (listRF.isEmpty()) {
+            isEmptyRF = true;
+        }
+        model.addAttribute("isEmptyRF", isEmptyRF);
+        model.addAttribute("listRF", listRF);
+
+        return "pmo-detailkaryawan";
+    }
+
+    @GetMapping("/proyek/status/{id}")
+    public String changeStatus(Model model, @PathVariable(value = "id") Integer id,
+                               RedirectAttributes ra,
+                               @RequestParam(value = "newstatus", required = false) Integer newstatus,
+                               Principal principal) {
+        String dateToday = rekapMappingDAO.getCurrentDate();
+        model.addAttribute("date_today", dateToday);
+
+
+        System.out.println("masuk controller");
+
+        ProyekModel proyeklama = proyekDAO.getProyekById(id);
+        ProyekModel proyekbaru = proyekDAO.getProyekById(id);
+
+        String notification ="";
+        if(newstatus==null) {
+
+            return "redirect:/proyek/detail/" + proyeklama.getId();
+        }
+
+        LocalDate periodeNow = LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonth(), 1);
+        if(newstatus==1) {
+            System.out.println("masuk ganti status jd 1");
+            proyekDAO.addProyekStatus(proyeklama.getId(), 1);
+            //ngeset end periode jadi skrg
+            proyekbaru.setEndPeriode(LocalDate.of(LocalDate.now().getYear(), LocalDate.now().getMonthValue(), 1));
+            notification = "Status proyek berhasil diubah menjadi Tidak Aktif";
+
+            List<KaryawanProyekModel> listKarPro = karyawanProyekDAO.getKaryawanProyekByProyek(proyekbaru.getId());
+            for(KaryawanProyekModel karyawanProyekItr : listKarPro) {
+                if(karyawanProyekItr.getEndPeriode().equals(null) || karyawanProyekItr.getEndPeriode().compareTo(periodeNow) > 0) {
+                    karyawanProyekItr.setEndPeriode(periodeNow);
+                    karyawanProyekDAO.updateKaryawanProyek(karyawanProyekItr);
+                }
+            }
+        }
+
+        if(newstatus==2) {
+            System.out.println("masuk ganti status jd 2");
+            proyekDAO.addProyekStatus(proyeklama.getId(), 2);
+            //ngeset end periode jadi null lagi
+            proyekbaru.setEndPeriode(null);
+            notification = "Status proyek berhasil diubah menjadi Aktif";
+
+            List<KaryawanProyekModel> listKarPro = karyawanProyekDAO.getKaryawanProyekByProyek(proyeklama.getId());
+            for(KaryawanProyekModel karyawanProyekItr : listKarPro) {
+                if(karyawanProyekItr.getEndPeriode().equals(proyeklama.getEndPeriode())) {
+                    karyawanProyekItr.setEndPeriode(null);
+                    karyawanProyekDAO.updateKaryawanProyek(karyawanProyekItr);
+                }
+            }
+        }
+
+
+        proyekDAO.updateProyek(proyekbaru);
+
+        model.addAttribute("notification", notification);
+
+        //add notifikasi flash
+        ra.addFlashAttribute("notification", notification);
+
+        return "redirect:/proyek/detail/" + proyeklama.getId();
+    }
+}

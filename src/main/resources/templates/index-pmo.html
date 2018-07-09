@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+<div th:replace="fragments/fragment :: navbar"></div>
+<div th:replace="fragments/fragment :: sidebar"></div>
+
+<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+    <div class="d-flex flex-row mb-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="roboto breadcrumb-item active" aria-current="page">
+                    <a th:href="'/pmo'">Beranda</a>
+                </li>
+            </ol>
+        </nav>
+        <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+    </div>
+
+    <div th:if="${notification != ''}" class="d-flex flex-row mb-5 alert alert-success" role="alert">
+        <h3 class="montserrat-small" th:text="${notification}"></h3>
+    </div>
+
+    <div class="row">
+        <div class="col text-left">
+            <div th:if="${previous != null}">
+                <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" th:href="@{'/pmo'(periode=${previous.month + ' ' + previous.year})}" th:text="${previous.month + ' ' + previous.year}"></a>
+            </div>
+        </div>
+        <div class="col text-center">
+            <div th:if="${current != null}">
+                <h3 th:text="${current.month + ' ' + current.year}" class="montserrat-med-bold">Current Periode</h3>
+                <form action="#" th:action="@{/pmo}" method="get">
+                    <input name="periode" id="periode" class="date-picker form-rounded form-control" readonly="readonly" style="background-color: transparent;"/>
+                    <br/>
+                    <input class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" type="submit" value="Pilih Periode" />
+                </form>
+            </div>
+        </div>
+        <div class="col text-right">
+            <div th:if="${next != null}">
+                <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" th:href="@{'/pmo'(periode=${next.month + ' ' + next.year})}" th:text="${next.month + ' ' + next.year}"></a>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+
+    </div>
+    <br/><hr/><br/>
+    <h2 class="text-center montserrat-bold-big">Matriks Penugasan</h2>
+    <table id="matrix-pmo" class="table table-matrix table-hover">
+        <thead class="tabel-header">
+        <tr>
+            <th></th>
+            <th class="text-center montserrat-small-bold">Total</th>
+            <th class="text-center montserrat-small-bold" th:each="proyek,iterationStatus: ${proyekList}"><a th:text="${proyek.kode}" th:href="${'/proyek/detail/' + proyek.id}"></a></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="map,iterationStatus: ${mapping}">
+            <th><a class="montserrat-small-bold" th:text="${map.karyawan.nama}" th:href="${'/pmo/detail-karyawan/' + map.karyawan.id}">Nama Karyawan</a></th>
+            <td class="text-center montserrat-small" th:text="${map.total + '%'}" th:style="|color: rgb(${map.red}, ${map.green}, 0);|"></td>
+            <div th:if="${current.compareTo(periodeNow) < 0}">
+                <td class="text-center montserrat-small" th:each="rekap,iterationStatus: ${map.rekapList}" th:text="${rekap.persentase + '%'}"></td>
+            </div>
+            <div th:unless="${current.compareTo(periodeNow) < 0}">
+                <div th:each="rekap,iterationStatus: ${map.rekapList}">
+                    <td class="text-center montserrat-small" th:if="${rekap.getPersentase() > 0}">
+                        <a th:text="${rekap.persentase + '%'}" th:href="'/pmo/update_assignment/' + ${rekap.idKaryawanProyek} + '/' + ${current.year} + '/' + ${current.getMonthValue()}"></a>
+                    </td>
+                    <td class="text-center montserrat-small" th:unless="${rekap.getPersentase() > 0}" th:if="${current!=null}">
+                        <a th:href="'/pmo/assign/' + ${map.karyawan.id} + '/' + ${rekap.idProyek} + '/' + ${current.year} + '/' + ${current.getMonthValue()}">Tugaskan</a>
+                    </td>
+                </div>
+            </div>
+        </tr>
+        </tbody>
+    </table>
+
+</main >
+
+<script type="text/javascript">
+    $(function() {
+        $('.date-picker').datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'MM yy',
+            onClose: function(dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+            }
+        });
+    });
+</script>
+<style>
+    .ui-datepicker-calendar {
+        display: none;
+    }
+</style>
+
+<div th:replace="fragments/fragment :: footer"></div>
+
+<!--<script-->
+        <!--src="https://code.jquery.com/jquery-3.3.1.js"-->
+        <!--integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="-->
+        <!--crossorigin="anonymous"></script>-->
+<!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">-->
+<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>-->
+<!--<script>-->
+    <!--$(document).ready( function () {-->
+        <!--$('#rekap-eksekutif').DataTable();-->
+    <!--} );-->
+<!--</script>-->
+</body>
+</html>

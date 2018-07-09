@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+    <div th:replace="fragments/fragment :: navbar"></div>
+    <div th:replace="fragments/fragment :: sidebar"></div>
+
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3 pl-3 pr-3">
+        <div class="d-flex flex-row mb-5">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="roboto breadcrumb-item active" aria-current="page">
+                        <a th:href="'/admin'">Beranda</a>
+                    </li>
+                    <li class="roboto breadcrumb-item active" aria-current="page">Tambah Pengguna</li>
+                </ol>
+            </nav>
+            <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+        </div>
+
+        <h3 th:if="${notification != null}" th:text="${notification}" class="d-flex flex-row mb-2 text-danger roboto"></h3>
+        <div class="d-flex flex-row mb-5">
+            <h2 class="montserrat-bold-big mr-2">Tambah Pegawai Sebagai Pengguna</h2>
+        </div>
+
+        <div class="d-flex flex-row mb-2 ml-5">
+            <form th:action="'/admin/addpengguna/submit'" th:object="${pengguna}" method="post">
+                <div class="form-row mb-3">
+                    <div class="col mr-2">
+                        <label class="montserrat-small-bold">Username</label>
+                        <input type="email" class="form-control form-rounded" name="username" th:field="*{username}" required>
+                    </div>
+                    <div class="col">
+                        <label class="montserrat-small-bold">Password</label>
+                        <input type="text" class="form-control form-rounded" name="password" th:field="*{password}" required>
+                    </div>
+                </div>
+                <div class="form-row mb-5">
+                    <div class="col">
+                        <label class="montserrat-small-bold">Nama Pegawai</label>
+                        <select th:field="*{id_pegawai_temp}" class="custom-select custom-select-md mb-3">
+                            <div th:each="pegawai,iterationStatus: ${pegawais}">
+                                <option th:value="${pegawai.id} + ' ' + ${pegawai.nama}" th:text="${pegawai.nama}"></option>
+                            </div>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group row">
+                        <div class="col">
+                        <button type="button" data-toggle="modal" data-target="#addModal"
+                                class="pusil-btn btn btn-primary montserrat-small btn-rounded">Tambah Pengguna</button>
+                    </div>
+                </div>
+                <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="montserrat-bold-big" id="exampleModalLabel">Konfirmasi Tambah Pengguna</h5>
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <p class="montserrat-small">Apakah Anda yakin ingin menambahkan pengguna ini?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="montserrat-small pusil-btn-danger btn btn-danger text-white btn-rounded" data-dismiss="modal">Batal</button>
+                                <button type="submit" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" name="action" value="save">Tambah Pengguna</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </main >
+
+    <div th:replace="fragments/fragment :: footer"></div>
+
+
+
+</body>
+</html>

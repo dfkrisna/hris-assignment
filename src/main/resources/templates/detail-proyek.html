@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+<body>
+    <div th:replace="fragments/fragment :: navbar"></div>
+    <div th:replace="fragments/fragment :: sidebar"></div>
+
+    <main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+        <div class="d-flex flex-row">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="roboto breadcrumb-item active" aria-current="page"><a th:href="'/karyawan'" >Beranda</a></li>
+                    <li class="roboto breadcrumb-item active" aria-current="page"><a th:href="'/karyawan/penugasan'">Riwayat Penugasan</a></li>
+                    <li class="roboto breadcrumb-item active" aria-current="page">Detail Penugasan</li>
+                </ol>
+            </nav>
+            <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+        </div>
+
+        <div th:if="${notification != null}" class="d-flex flex-row mb-3 col-md-12">
+            <h3 th:text="${notification}" class="text-primary montserrat-small-bold alert alert-success"></h3>
+        </div>
+
+        <div>
+            <br/>
+            <div class="row">
+            <div class="col-sm-9">
+                <h2 class="montserrat-med-bold" th:text="${detailPenugasan.namaProyek}"></h2><br/>
+            </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <h6 class="montserrat-small-bold">Periode Penugasan:</h6>
+                    <p class="montserrat-small" th:text="${detailPenugasan.getPeriode()}"></p>
+                </div>
+                <div class="col-sm-3">
+                    <h6 class="montserrat-small-bold">Role Anda:</h6>
+                    <p class="montserrat-small" th:text="${detailPenugasan.role}"></p>
+                </div>
+                <div class="col-sm-3">
+                    <h6 class="montserrat-small-bold">Status Proyek:</h6>
+                    <p class="montserrat-small" th:text="${detailPenugasan.statusProyek}"></p>
+                </div>
+                <div class="col-sm-3">
+                    <h6 class="montserrat-small-bold">Persentase Kontribusi:</h6>
+                    <p class="montserrat-small" th:text="${detailPenugasan.persentase + '%'}"></p>
+                </div>
+            </div><br/>
+
+            <div class="row">
+                <div class="col-sm-3">
+                    <h6 class="montserrat-small-bold">Pimpinan Proyek:</h6>
+                    <p class="montserrat-small" th:text="${detailPenugasan.teamLead}"></p>
+                </div>
+                <div class="col-sm-3">
+                    <h6 class="montserrat-small-bold">Nama Klien:</h6>
+                    <p class="montserrat-small" th:text="${detailPenugasan.namaKlien}"></p>
+                </div>
+                <div class="col-sm-3">
+                    <h6 class="montserrat-small-bold">Penugasan Dimulai:</h6>
+                    <p class="montserrat-small" th:text="${detailPenugasan.startPeriode.month + ' ' + detailPenugasan.startPeriode.year}"></p>
+                </div>
+                <div class="col-sm-3">
+                    <h6 class="montserrat-small-bold">Penugasan Berakhir:</h6>
+                    <p class="montserrat-small" th:if="${detailPenugasan.endPeriode != null}" th:text="${detailPenugasan.endPeriode.month + ' ' + detailPenugasan.endPeriode.year}"></p>
+                    <p class="montserrat-small" th:if="${detailPenugasan.endPeriode == null}" th:text="Sekarang"></p>
+                </div>
+            </div><br/><hr/>
+        </div>
+
+        <h3 class="montserrat-med-bold">Evaluasi Diri</h3>
+
+        <div class="row">
+            <table id="tabel-penilaian-mandiri" class="table table-hover montserrat-small">
+                <thead id="tabel-header" class="montserrat-small-bold">
+                    <tr>
+                        <th>Periode</th>
+                        <th>Kontribusi</th>
+                        <th>Evaluasi Diri</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody class="montserrat-small">
+                    <tr th:each="itemPenilaianMandiri, iterationStatus: ${rekapPenilaianMandiri}">
+                        <td th:text="${itemPenilaianMandiri.periode.month + ' ' + itemPenilaianMandiri.periode.year}"></td>
+                        <td th:text="${itemPenilaianMandiri.getPersentase()} + '%'"></td>
+                        <td th:text="${itemPenilaianMandiri.penilaianMandiri}"></td>
+                        <td th:text="${itemPenilaianMandiri.getStatusPenilaianMandiri()} == true ? 'Sudah Difinalisasi' : 'Belum Difinalisasi' "></td>
+                        <td th:if="${itemPenilaianMandiri.getStatusPenilaianMandiri() == false and itemPenilaianMandiri.penilaianMandiri != null}">
+                            <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" th:text="'Ubah'" th:href = "'/karyawan/penilaian-mandiri/tambah/' + ${itemPenilaianMandiri.idProyek} + '/' + ${itemPenilaianMandiri.id}"></a></td>
+                        <td th:if="${itemPenilaianMandiri.getStatusPenilaianMandiri() == false and itemPenilaianMandiri.penilaianMandiri == null}">
+                            <a class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" th:text="'Tambah'" th:href = "'/karyawan/penilaian-mandiri/tambah/' + ${itemPenilaianMandiri.idProyek} + '/' +${itemPenilaianMandiri.id}"></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+    <div th:replace="fragments/fragment :: footer"></div>
+</body>
+
+</html>

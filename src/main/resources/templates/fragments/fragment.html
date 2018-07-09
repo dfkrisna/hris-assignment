@@ -1,27 +1,53 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title></title>
-    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="css/home.css">
-    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
-    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet'>
+<head th:fragment="header-title">
+    <meta charset="UTF-8">
+    <title>SI SDM Penugasan dan Penilaian</title>
+    <script type="text/javascript" th:src="@{/js/bootstrap.min.js}"></script>
+    <script th:src="@{https://code.jquery.com/jquery-3.2.1.slim.min.js}" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        $.noConflict(true);
+    </script>
+    <script type="text/javascript" th:src="@{https://code.jquery.com/jquery-1.12.4.js}"></script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js}" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script th:src="@{https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js}" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js}"></script>
+    <script type="text/javascript" th:src="@{https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js}"></script>
+    <script type="text/javascript" th:src="@{https://cdn.datatables.net/1.10.16/js/dataTables.bootstrap4.min.js}"></script>
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/js/select2.min.js}"></script>
+    <script type="text/javascript" charset="utf8" th:src="@{https://cdn.datatables.net/fixedcolumns/3.2.4/js/dataTables.fixedColumns.min.js}"></script>
+    <link rel="stylesheet" type="text/css" media="screen" th:href="@{https://cdn.datatables.net/fixedcolumns/3.2.4/css/fixedColumns.bootstrap4.min.css}">
+
+    <script th:src="@{https://code.jquery.com/ui/1.12.1/jquery-ui.min.js}"></script>
+    <link rel="stylesheet" type="text/css" media="screen" th:href="'https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css'">
+
+    <script th:src="@{https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js}"></script>
+    <link th:href="'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.6-rc.0/css/select2.min.css'" rel="stylesheet" />
+
+    <link rel="stylesheet" th:href="'https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css'">
+    <link rel="stylesheet" th:href="'https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css'"/>
+    <link rel="stylesheet" th:href="'https://cdn.datatables.net/1.10.16/css/dataTables.bootstrap4.min.css'"/>
+    <link rel="stylesheet" th:href="'/css/bootstrap.min.css'"/>
+
+    <link rel="stylesheet" th:href="/css/home.css">
+    <link th:href="'https://fonts.googleapis.com/css?family=Roboto'" rel='stylesheet'>
+    <link th:href="'https://fnts.googleapis.com/css?family=Montserrat:300,500,700'" rel='stylesheet'>
+    <script type="text/javascript" th:src="@{/js/util.js}"></script>
 </head>
 <body>
     <nav th:fragment="navbar" id="navbar-utama" class="navbar bg-light sticky-top">
         <div class="navbar-header col-md-2">
             <a class="navbar-brand" ref="#">
-                <img id="logo-pusilkom" alt="pusilkom" src="img/mainsite.png">
+                <img id="logo-pusilkom" alt="pusilkom" th:src="@{/img/mainsite.png}">
             </a>
-            <span class="montserrat navbar-brand col-sm-3 col-md-2 mr-0 text-dark">MODUL <strong>PENUGASAN</strong> DAN <strong>PENILAIAN</strong></span>
+            <span class="montserrat navbar-brand col-sm-3 col-md-2 mr-0 text-dark"><strong>SISDM</strong> MODUL <strong>PENUGASAN</strong> DAN <strong>PENILAIAN</strong></span>
         </div>
         <ul class="nav navbar-nav col-md-8 text-right">
             <li class="nav-item text-nowrap">
-                <span class="nav-link text-secondary"><img id="icon-navbar" class="mr-2 mb-1" alt="pusilkom" src="img/avatar.png">Jonathan Joestar</span>
+                <span class="nav-link text-secondary"><img id="icon-navbar" class="mr-2 mb-1" alt="pusilkom" th:src="@{/img/avatar.png}" style="display:inline-block;"><p style="display:inline-block;" th:text="${currentUser.username}">Jonathan Joestar</p></span>
             </li>
         </ul>
-        <form class="navbar-form navbar-rightcol-md-2" method="post">
+        <form th:action="@{/logout}" class="navbar-form navbar-rightcol-md-2" method="post">
             <input class="btn btn-outline-danger" type="submit" value="logout"/>
         </form>
     </nav>
@@ -32,23 +58,58 @@
                 <div class="sidebar-sticky">
                     <ul class="nav flex-column mt-4">
                         <li class="nav-item">
-                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" href="#">
-                                <img>Beranda
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline">
+                                Selamat Datang!
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" href="#">
-                                <img class="icon-sidebar mr-2 mb-1" src="img/yellow-home.png">Beranda
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_SYSTEMADMIN')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/admin'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-home.png}">Beranda Admin
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" href="#">
-                                <img class="icon-sidebar mr-2 mb-1" src="img/yellow-people.png">Rekan Seproyek
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_SYSTEMADMIN')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/admin/addpengguna'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-people.png}">Tambah Pengguna
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" href="#">
-                                <img class="icon-sidebar mr-2 mb-1" src="img/yellow-clock.png">Riwayat Penugasan
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_KARYAWAN')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/karyawan'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-home.png}">Beranda Karyawan
+                            </a>
+                        </li>
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_KARYAWAN')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/karyawan/rekanseproyek'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-people.png}">Rekan Seproyek
+                            </a>
+                        </li>
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_KARYAWAN')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/karyawan/penugasan'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-clock.png}">Riwayat Penugasan
+                            </a>
+                        </li>
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_KARYAWAN')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/karyawan/projectlead'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-role.png}">Proyek Dipimpin
+                            </a>
+                        </li>
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_MANAJERDIVISI')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/mngdivisi'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-home.png}">Beranda Manajer Divisi
+                            </a>
+                        </li>
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_PMO')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/pmo'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-home.png}">Beranda PMO
+                            </a>
+                        </li>
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_EKSEKUTIF')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/eksekutif'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-home.png}">Beranda Eksekutif
+                            </a>
+                        </li>
+                        <li th:if="${#lists.contains(currentUser.strRoles,'ROLE_PMO')}" class="nav-item">
+                            <a class="side-text roboto nav-link active text-light mb-2 effect-underline" th:href="'/proyek/tambah'">
+                                <img class="icon-sidebar mr-2 mb-1" th:src="@{/img/yellow-project.png}">Tambah Proyek
                             </a>
                         </li>
                     </ul>
@@ -59,8 +120,8 @@
 
     <footer th:fragment="footer" id="pusilkom-footer" class="col-md-12 bg-dark p-2">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <img id="footer-pusilkom" alt="pusilkom" src="img/logo-footer-pusilkom-ui-50x56.png">
+            <a class="navbar-brand" th:href="'#'">
+                <img id="footer-pusilkom" alt="pusilkom" th:src="@{/img/logo-footer-pusilkom-ui-50x56.png}">
             </a>
             <span class="text-muted">Copyright © 2018 Pusat Ilmu Komputer Universitas Indonesia (Pusilkom UI)</span>
         </div>

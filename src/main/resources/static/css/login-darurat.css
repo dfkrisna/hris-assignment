@@ -1,0 +1,76 @@
+body {
+    background-color: #FFCF26;
+}
+
+.roboto {
+    font-family: 'Roboto';
+    font-size: 14px;
+}
+
+.param {
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    margin-left: 80px;
+}
+
+.cont-login {
+    margin-top: 60px;
+    margin-bottom: 60px;
+    padding-top: 30px;
+    position: center;
+    width: 600px;
+    height: 350px;
+    background: #232323;
+    box-shadow: 0px 5px 15px rgba(74, 74, 74, 0.15);
+    border-radius: 8px;
+}
+
+.montserrat-bold{
+    font-weight: 700;
+    font-family: 'Montserrat';
+}
+
+.montserrat-regular{
+    font-weight: 200;
+    font-family: 'Montserrat';
+}
+
+.content{
+    height: 100vh;
+}
+
+.judul {
+    text-shadow: 0px 2px 1px #7c7c7c;
+}
+
+.white {
+    color: white;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    /* Set the hr color */
+    color: #333; /* old IE */
+    background-color: #333; /* Modern Browsers */
+    max-width: 50%;
+}
+
+.button-login {
+    background-color: #F2994A !important;
+    color: white;
+}
+
+#footer-pusilkom {
+    height: 28px;
+    width: 25px;
+}
+
+.footer {
+    z-index: 2;
+}
+
+#pusilkom-footer {
+    background-color: #232323 !important;
+}

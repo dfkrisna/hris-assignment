@@ -1,0 +1,91 @@
+<!--<!DOCTYPE html>-->
+<!--<html lang="en" xmlns="http://www.w3.org/1999/xhtml"-->
+      <!--xmlns:th="http://www.thymeleaf.org"-->
+      <!--xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">-->
+<!--<head th:replace="fragments/fragment :: header-title">-->
+<!--</head>-->
+<!--<body>-->
+<!--<div th:replace="fragments/fragment :: navbar"></div>-->
+
+<!--<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">-->
+    <!--<form th:action="@{/login}" method="post">-->
+        <!--<div><label> Email : <input type="text" name="username"/>-->
+        <!--</label></div>-->
+        <!--<div><label> Password: <input type="password" name="password"/>-->
+        <!--</label></div>-->
+        <!--<div><input type="submit" value="Sign In"/></div>-->
+    <!--</form>-->
+<!--</main >-->
+
+<!--<div th:replace="fragments/fragment :: footer"></div>-->
+
+
+
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <title></title>
+    <script type="text/javascript" src="/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" th:href="'css/bootstrap.min.css'"/>
+    <link rel="stylesheet" type="text/css" th:href="'css/login-darurat.css'">
+    <link href='https://fonts.googleapis.com/css?family=Roboto' rel='stylesheet'>
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:200,700' rel='stylesheet'>
+</head>
+<body class="text-center">
+<div class="content cover-container d-flex p-3 mx-auto flex-column">
+    <main class="mt-auto mb-auto inner cover" role="main">
+        <h1 class="judul montserrat-bold">MODUL <span class="white">PENUGASAN</span></h1>
+        <h1 class="judul montserrat-bold">DAN <span class="white">PENILAIAN</span></h1>
+        <br>
+        <h1 class="montserrat-regular">PUSILKOM UI</h1>
+        <hr>
+
+        <div class="container cont-login">
+            <div class="param" th:if="${param.error}" th:text="${param.error.toString()} + 'Invalid username and password.'" style="color: #ffffff;">
+
+            </div>
+            <div class="param" th:if="${param.logout}" style="color: #ffffff;">
+                You have been logged out.
+            </div>
+            <form th:action="@{/login}" method="post">
+
+                <div style="font-size: 18px;
+		    		margin-top: 50px;
+		    		margin-bottom: 30px;
+		    		margin-left: 80px;">
+                    <div class="form-group row">
+                        <label for="inputEmail" class="col-sm-3 col-form-label" style="color:#ffffff">Username</label>
+                        <div class="col-sm-7">
+                            <input type="text" name="username" class="form-control" id="inputEmail" placeholder="Username"/>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="inputPassword" class="col-sm-3 col-form-label" style="color:#ffffff">Password</label>
+                        <div class="col-sm-7">
+                            <input type="password" name="password" class="form-control" id="inputPassword" placeholder="Password"/>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="text-align: center;">
+                    <input type="submit" class="btn btn-primary btn-lg" value="Login"/>
+                </div>
+            </form>
+        </div>
+    </main>
+</div>
+
+<footer th:fragment="footer" id="pusilkom-footer" class="col-md-12 bg-dark p-2">
+    <div class="container">
+        <a class="navbar-brand" th:href="'#'">
+            <img id="footer-pusilkom" alt="pusilkom" src="img/logo-footer-pusilkom-ui-50x56.png">
+        </a>
+        <span class="text-muted">Copyright © 2018 Pusat Ilmu Komputer Universitas Indonesia (Pusilkom UI)</span>
+    </div>
+</footer>
+
+</body>
+</html>

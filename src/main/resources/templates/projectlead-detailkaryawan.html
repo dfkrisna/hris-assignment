@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/fragment :: header-title">
+</head>
+
+<!--<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"/>-->
+<!--<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>-->
+<!--<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>-->
+
+<body>
+<div th:replace="fragments/fragment :: navbar"></div>
+<div th:replace="fragments/fragment :: sidebar"></div>
+
+<main id="content-isi" class="col-md-9 ml-sm-auto col-lg-10 pt-3 px-4 pb-3">
+    <div class="d-flex flex-row mb-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="roboto breadcrumb-item active" aria-current="page">
+                    <a th:href="'/karyawan'">Beranda</a>
+                </li>
+                <li class="roboto breadcrumb-item active" aria-current="page">
+                    <a th:href="'karyawan/projectlead/detail/' + ${proyek.id} + '/' + ${karyawan.id}">Detail Karyawan</a>
+                </li>
+            </ol>
+        </nav>
+        <h2 class="ml-auto roboto" th:text="${#dates.format(#dates.createNow(), 'dd MMM yyyy')}"></h2>
+    </div>
+
+    <div class="d-flex flex-row mb-5">
+        <h2 class="montserrat-bold-big mr-2" th:text="'Proyek: ' + ${proyek.getNamaProyek()}">Proyek A</h2>
+    </div>
+    <div class="d-flex flex-row mb-5">
+        <h3 class="text-muted montserrat-bold-big mr-2" th:text="${karyawan.getNama()}">Nolana McLagan</h3>
+    </div>
+
+    <div class="row">
+        <div class="col text-left">
+
+        </div>
+        <div class="col text-center">
+
+        </div>
+        <div class="col text-right">
+
+        </div>
+    </div>
+
+    <br/>
+
+    <nav>
+        <div class="nav nav-tabs" id="nav-tab" role="tablist">
+            <a class="nav-item nav-link active montserrat-small-bold" id="nav-penilaian-mandiri-tab" data-toggle="tab" href="#nav-penilaian-mandiri" role="tab" aria-controls="nav-penilaian-mandiri" aria-selected="true">Rekap Evaluasi Diri</a>
+            <a class="nav-item nav-link montserrat-small-bold" id="nav-feedback-tab" data-toggle="tab" th:href="'#nav-feedback'" role="tab" aria-controls="nav-feedback" aria-selected="false">Feedback Karyawan</a>
+        </div>
+    </nav>
+    <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-penilaian-mandiri" role="tabpanel" aria-labelledby="nav-penilaian-mandiri-tab">
+            <br/>
+            <div th:if="${notification != ''}" class="d-flex flex-row mb-5 alert alert-success" role="alert">
+                <h3 class="monsterrat-small mr-2" th:text="${notification}"></h3>
+            </div>
+
+            <div th:if="${isEmpty}">
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-8 text-center">
+                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">Karyawan belum mendapat </h2>
+                        <h2 class="d-inline text-value text-center text-muted montserrat-med-bold">feedback dari rekan </h2>
+                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">pada periode ini</h2>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+            <div th:unless="${isEmpty}">
+                <table id="tabel-finalisasi" class="table table-hover">
+                    <thead class="tabel-header">
+                    <tr>
+                        <th class="montserrat-small-bold" scope="col">Periode</th>
+                        <th class="montserrat-small-bold" scope="col">Evaluasi Diri</th>
+                        <th class="montserrat-small-bold" scope="col">Aksi</th>
+                    </tr>
+                    </thead>
+                    <div th:each="rekap, iterationStatus: ${karyawanRekap.getRekapList()}">
+                        <tr>
+                            <td class="montserrat-small" th:text="${rekap.periode}"></td>
+                            <td class="montserrat-small" th:if="${rekap.penilaianMandiri != null}" th:text="${rekap.penilaianMandiri}"></td>
+                            <td class="montserrat-small" th:unless="${rekap.penilaianMandiri != null}" style="color: darkgrey;">Karyawan Belum Mengisi Evaluasi Diri</td>
+                            <td class="montserrat-small" th:if="${rekap.isApproved()}" style="color: green;">Telah Difinalisasi</td>
+                            <div th:unless="${rekap.isApproved()}">
+                                <td th:if="${rekap.penilaianMandiri != null}">
+                                    <form action="/karyawan/projectlead/detail/finalisasi" method="post">
+                                        <input type="hidden" name="periode" id="periode" th:value="${rekap.periode}"/>
+                                        <input type="hidden" name="idKarProy" id="idKarProy" th:value="${rekap.idKaryawanProyek}"/>
+                                        <!--<input class="btn pusil-btn btn-primary" type="submit" value="Finalisasi" />-->
+
+                                        <button type="button" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" data-toggle="modal" data-target="#final-confirm">Finalisasi</button>
+
+
+                                        <div class="modal fade" id="final-confirm" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                            <div class="modal-dialog" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title montserrat-med" id="exampleModalLabel">Finalisasi Evaluasi Diri</h5>
+                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                            <span aria-hidden="true">&times;</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <p class="montserrat-small">Apakah anda yakin akan memfinalisasi evaluasi diri?</p>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="montserrat-small pusil-btn-danger btn btn-danger text-white btn-rounded" data-dismiss="modal">Batalkan</button>
+                                                        <button type="submit" class="montserrat-small pusil-btn btn btn-dark text-white btn-rounded" name="action" value="save">Finalisasi</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    </form>
+                                </td>
+                                <td th:unless="${rekap.penilaianMandiri != null}">
+                                    <p class="montserrat-small" style="color: darkgrey;">Tidak Tersedia</p>
+                                </td>
+                            </div>
+                        </tr>
+                    </div>
+                </table>
+            </div>
+
+        </div>
+        <div class="tab-pane fade" id="nav-feedback" role="tabpanel" aria-labelledby="nav-feedback-tab">
+            <br/>
+            <div th:if="${isEmptyRF}">
+                <div class="row">
+                    <div class="col-2"></div>
+                    <div class="col-8 text-center">
+                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">Karyawan belum mendapat </h2>
+                        <h2 class="d-inline text-value text-center text-muted montserrat-med">feedback dari rekan </h2>
+                        <h2 class="d-inline text-sub text-center text-muted montserrat-med mr-2">pada proyek ini</h2>
+                    </div>
+                    <div class="col-2"></div>
+                </div>
+            </div>
+            <div th:unless="${isEmptyRF}">
+                <table id="tabel-detailkar" class="table table-hover">
+                    <thead class="tabel-header">
+                    <tr>
+                        <th class="montserrat-small-bold" scope="col">Periode</th>
+                        <th class="montserrat-small-bold" scope="col">Penilai</th>
+                        <th class="montserrat-small-bold" scope="col">Role Penilai</th>
+                        <th class="montserrat-small-bold" scope="col">Feedback</th>
+                        <th class="montserrat-small-bold" scope="col">Rating</th>
+                        <th class="montserrat-small-bold" scope="col">Tanggal</th>
+                    </tr>
+                    </thead>
+                    <div th:each="RF, iterationStatus: ${listRF}">
+                        <tr>
+                            <td class="montserrat-small" th:text="${RF.periode}"></td>
+                            <td class="montserrat-small" th:text="${RF.namaPenilai}"></td>
+                            <td class="montserrat-small" th:text="${RF.rolePenilai}"></td>
+                            <td class="montserrat-small" th:text="${RF.feedback}"></td>
+                            <td th:if="${RF.rating==0}" class="montserrat-small text-center text-value">
+                                <img class="d-inline icon-sidebar mr-2" src="/img/black-star.png">
+                                <p class="d-inline montserrat-small text-muted" th:text="${RF.rating}"></p>
+                            </td>
+                            <td th:if="${RF.rating>0 && RF.rating<=60}" class="montserrat-small text-center text-value">
+                                <img class="d-inline icon-sidebar mr-2" src="/img/bronze-star.png">
+                                <p class="d-inline montserrat-small text-muted" th:text="${RF.rating}"></p>
+                            </td>
+                            <td th:if="${RF.rating>60 && RF.rating<=80}" class="montserrat-small text-center text-value">
+                                <img class="d-inline icon-sidebar mr-2" src="/img/silver-star.png">
+                                <p class="d-inline montserrat-small text-muted" th:text="${RF.rating}"></p>
+                            </td>
+                            <td th:if="${RF.rating>80 && RF.rating<=100}" class="montserrat-small text-center text-value">
+                                <img class="d-inline icon-sidebar mr-2" src="/img/gold-star.png">
+                                <p class="d-inline montserrat-small text-muted" th:text="${RF.rating}"></p>
+                            </td>
+
+
+
+                            <td class="montserrat-small" th:text="${RF.tanggalPenilaian}"></td>
+                        </tr>
+                    </div>
+                </table>
+            </div>
+
+        </div>
+    </div>
+
+    <div th:if="${!isEmptyRF}">
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    Keterangan Rentang Nilai:
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/gold-star.png">: 81-100
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/silver-star.png">: 61-80
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-1">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/bronze-star.png">: 1-60
+                </h3>
+            </div>
+        </div>
+        <div class="d-flex flex-row mb-2">
+            <div class="col text-center">
+                <h3 class="montserrat-small text-muted">
+                    <img class="d-inline icon-sidebar mr-1" src="/img/black-star.png">: Belum Dinilai
+                </h3>
+            </div>
+        </div>
+    </div>
+
+</main >
+
+
+<!--<script-->
+        <!--src="https://code.jquery.com/jquery-3.3.1.js"-->
+        <!--integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="-->
+        <!--crossorigin="anonymous"></script>-->
+<!--<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.16/css/jquery.dataTables.css">-->
+<!--<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.js"></script>-->
+
+<script
+        src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"
+        integrity="sha256-T0Vest3yCU7pafRw9r+settMBX6JkKN06dqBnpQ8d30="
+        crossorigin="anonymous"></script>
+
+<link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.2/themes/base/jquery-ui.css">
+<script type="text/javascript">
+    $(function() {
+        $('.date-picker').datepicker( {
+            changeMonth: true,
+            changeYear: true,
+            showButtonPanel: true,
+            dateFormat: 'MM yy',
+            onClose: function(dateText, inst) {
+                $(this).datepicker('setDate', new Date(inst.selectedYear, inst.selectedMonth, 1));
+            }
+        });
+    });
+</script>
+<style>
+    .ui-datepicker-calendar {
+        display: none;
+    }
+</style>
+
+
+<div th:replace="fragments/fragment :: footer"></div>
+
+</body>
+</html>
